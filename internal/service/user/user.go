@@ -15,11 +15,11 @@ func NewUserService() service.User {
 	return &UserService{repo: repo}
 }
 
-func (p *UserService) Create(u *entity.User) (uint64, error) {
+func (p *UserService) Create(u *entity.User) (string, error) {
 	return p.repo.Create(u)
 }
 
-func (p *UserService) Get(id uint64) (*entity.User, error) {
+func (p *UserService) Get(id string) (*entity.User, error) {
 	return p.repo.Get(id)
 }
 
@@ -27,6 +27,6 @@ func (p *UserService) Update(u *entity.User) (*entity.User, error) {
 	return p.repo.Update(u)
 }
 
-func (p *UserService) Delete(id uint64) error {
+func (p *UserService) Delete(id string) error {
 	return p.repo.Delete(id)
 }

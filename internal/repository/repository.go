@@ -6,10 +6,10 @@ import (
 )
 
 type User interface {
-	Create(u *entity.User) (uint64, error)
-	Get(id uint64) (*entity.User, error)
+	Create(u *entity.User) (string, error)
+	Get(id string) (*entity.User, error)
 	Update(u *entity.User) (*entity.User, error)
-	Delete(id uint64) error
+	Delete(id string) error
 }
 
 func NewRepository() User {

@@ -10,13 +10,13 @@ func NewUserPostgres() *Postgres {
 	return &Postgres{}
 }
 
-func (p *Postgres) Create(u *entity.User) (uint64, error) {
-	return 1, nil
+func (p *Postgres) Create(u *entity.User) (string, error) {
+	return u.Id, nil
 }
 
-func (p *Postgres) Get(id uint64) (*entity.User, error) {
+func (p *Postgres) Get(id string) (*entity.User, error) {
 	return &entity.User{
-		Id:       0,
+		Id:       "123",
 		Name:     "my name",
 		Email:    "my email",
 		Password: "hashed password",
@@ -25,12 +25,12 @@ func (p *Postgres) Get(id uint64) (*entity.User, error) {
 
 func (p *Postgres) Update(u *entity.User) (*entity.User, error) {
 	return &entity.User{
-		Id:       0,
+		Id:       "123",
 		Name:     "my updated name",
 		Email:    "my updated email",
 		Password: "updated hashed password",
 	}, nil
 }
-func (p *Postgres) Delete(id uint64) error {
+func (p *Postgres) Delete(id string) error {
 	return nil
 }

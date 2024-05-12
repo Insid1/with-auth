@@ -5,8 +5,8 @@ import (
 )
 
 type User interface {
-	Create(*entity.User) (uint64, error)
-	Get(uint64) (*entity.User, error)
+	Create(*entity.User) (string, error)
+	Get(string) (*entity.User, error)
 	Update(*entity.User) (*entity.User, error)
-	Delete(uint64) error
+	Delete(string) error
 }
