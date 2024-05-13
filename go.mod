@@ -1,4 +1,4 @@
-module goAuth
+module github.com/Insid1/go-auth-user
 
 go 1.20
 

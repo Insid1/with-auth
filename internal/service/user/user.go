@@ -1,9 +1,9 @@
 package service
 
 import (
-	"goAuth/internal/entity"
-	"goAuth/internal/repository"
-	"goAuth/internal/service"
+	"github.com/Insid1/go-auth-user/internal/entity"
+	"github.com/Insid1/go-auth-user/internal/repository"
+	"github.com/Insid1/go-auth-user/internal/service"
 )
 
 type UserService struct {

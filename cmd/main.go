@@ -1,7 +1,7 @@
 package main
 
 import (
-	"goAuth/internal/api"
+	"github.com/Insid1/go-auth-user/internal/api"
 
 	"github.com/gin-gonic/gin"
 )

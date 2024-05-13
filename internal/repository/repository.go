@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"goAuth/internal/entity"
-	"goAuth/internal/repository/postgres"
+	"github.com/Insid1/go-auth-user/internal/entity"
+	"github.com/Insid1/go-auth-user/internal/repository/postgres"
 )
 
 type User interface {

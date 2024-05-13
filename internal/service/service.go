@@ -1,7 +1,7 @@
 package service
 
 import (
-	"goAuth/internal/entity"
+	"github.com/Insid1/go-auth-user/internal/entity"
 )
 
 type User interface {

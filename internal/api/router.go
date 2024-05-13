@@ -1,7 +1,7 @@
 package api
 
 import (
-	handler "goAuth/internal/handler/user"
+	handler "github.com/Insid1/go-auth-user/internal/handler/user"
 
 	"github.com/gin-gonic/gin"
 )

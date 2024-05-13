@@ -3,10 +3,10 @@ package handler
 import (
 	"net/http"
 
-	"goAuth/internal/entity"
-	"goAuth/internal/handler"
-	service2 "goAuth/internal/service"
-	user2 "goAuth/internal/service/user"
+	"github.com/Insid1/go-auth-user/internal/entity"
+	"github.com/Insid1/go-auth-user/internal/handler"
+	service2 "github.com/Insid1/go-auth-user/internal/service"
+	user2 "github.com/Insid1/go-auth-user/internal/service/user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
