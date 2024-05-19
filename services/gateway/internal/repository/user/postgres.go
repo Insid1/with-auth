@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/Insid1/go-auth-user/internal/entity"
+	"github.com/Insid1/go-auth-user/gateway/internal/entity"
 )
 
 type Postgres struct{}

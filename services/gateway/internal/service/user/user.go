@@ -1,8 +1,8 @@
 package user
 
 import (
-	"github.com/Insid1/go-auth-user/internal/entity"
-	"github.com/Insid1/go-auth-user/internal/repository"
+	"github.com/Insid1/go-auth-user/gateway/internal/entity"
+	"github.com/Insid1/go-auth-user/gateway/internal/repository"
 )
 
 type Service struct {

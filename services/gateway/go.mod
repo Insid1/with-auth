@@ -1,4 +1,4 @@
-module github.com/Insid1/go-auth-user
+module github.com/Insid1/go-auth-user/gateway
 
 go 1.20
 

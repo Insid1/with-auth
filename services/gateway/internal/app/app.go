@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Insid1/go-auth-user/internal/api"
+	"github.com/Insid1/go-auth-user/gateway/internal/api"
 	"github.com/gin-gonic/gin"
 )
 

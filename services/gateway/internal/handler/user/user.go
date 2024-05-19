@@ -3,8 +3,8 @@ package user
 import (
 	"net/http"
 
-	"github.com/Insid1/go-auth-user/internal/entity"
-	"github.com/Insid1/go-auth-user/internal/service"
+	"github.com/Insid1/go-auth-user/gateway/internal/entity"
+	"github.com/Insid1/go-auth-user/gateway/internal/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

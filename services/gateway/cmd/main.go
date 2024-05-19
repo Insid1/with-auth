@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/Insid1/go-auth-user/internal/app"
+	"github.com/Insid1/go-auth-user/gateway/internal/app"
 )
 
 func main() {
@@ -20,5 +20,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to run app: %s", err.Error())
 	}
-
 }

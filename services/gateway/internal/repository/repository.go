@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"github.com/Insid1/go-auth-user/internal/entity"
-	"github.com/Insid1/go-auth-user/internal/repository/user"
+	"github.com/Insid1/go-auth-user/gateway/internal/entity"
+	"github.com/Insid1/go-auth-user/gateway/internal/repository/user"
 )
 
 type User interface {
