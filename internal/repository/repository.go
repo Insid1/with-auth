@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/Insid1/go-auth-user/internal/entity"
-	"github.com/Insid1/go-auth-user/internal/repository/postgres"
+	"github.com/Insid1/go-auth-user/internal/repository/user"
 )
 
 type User interface {
@@ -13,5 +13,5 @@ type User interface {
 }
 
 func NewRepository() User {
-	return postgres.NewUserPostgres()
+	return &user.Postgres{}
 }

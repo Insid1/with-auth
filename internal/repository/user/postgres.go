@@ -1,14 +1,10 @@
-package postgres
+package user
 
 import (
 	"github.com/Insid1/go-auth-user/internal/entity"
 )
 
 type Postgres struct{}
-
-func NewUserPostgres() *Postgres {
-	return &Postgres{}
-}
 
 func (p *Postgres) Create(u *entity.User) (string, error) {
 	return u.Id, nil

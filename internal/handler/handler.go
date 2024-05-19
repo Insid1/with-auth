@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"github.com/Insid1/go-auth-user/internal/handler/user"
+	"github.com/Insid1/go-auth-user/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,4 +11,8 @@ type User interface {
 	Get(*gin.Context)
 	Update(*gin.Context)
 	Delete(*gin.Context)
+}
+
+func NewUserHandler() User {
+	return &user.Handler{Service: service.NewUserService()}
 }

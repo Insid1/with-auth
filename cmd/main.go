@@ -1,15 +1,24 @@
 package main
 
 import (
-	"github.com/Insid1/go-auth-user/internal/api"
+	"context"
+	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/Insid1/go-auth-user/internal/app"
 )
 
 func main() {
-	engine := gin.Default()
 
-	api.UseRoutes(engine)
+	ctx := context.Background()
 
-	engine.Run(":8081") // listen and serve on 0.0.0.0:8081 (for windows "localhost:8080")
+	a, err := app.NewApp(ctx)
+	if err != nil {
+		log.Fatalf("failed to init app: %s", err.Error())
+	}
+
+	err = a.Run("8801")
+	if err != nil {
+		log.Fatalf("failed to run app: %s", err.Error())
+	}
+
 }

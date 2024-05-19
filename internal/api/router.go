@@ -1,17 +1,13 @@
 package api
 
 import (
-	handler "github.com/Insid1/go-auth-user/internal/handler/user"
-
+	"github.com/Insid1/go-auth-user/internal/handler"
 	"github.com/gin-gonic/gin"
 )
 
-func UseRoutes(engine *gin.Engine) {
-	userHandler := handler.NewUserHandler()
-
-	engine.POST("/user", userHandler.Create)
-
-	engine.GET("/user/:userID", userHandler.Get)
-	engine.PUT("/user/:userID", userHandler.Update)
-	engine.DELETE("/user/:userID", userHandler.Delete)
+func UseRoutes(httpEngine *gin.Engine, handler handler.User) {
+	httpEngine.POST("/user", handler.Create)
+	httpEngine.GET("/user/:userID", handler.Get)
+	httpEngine.PUT("/user/:userID", handler.Update)
+	httpEngine.DELETE("/user/:userID", handler.Delete)
 }

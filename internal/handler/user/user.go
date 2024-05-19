@@ -1,32 +1,30 @@
-package handler
+package user
 
 import (
 	"net/http"
 
 	"github.com/Insid1/go-auth-user/internal/entity"
-	"github.com/Insid1/go-auth-user/internal/handler"
-	service2 "github.com/Insid1/go-auth-user/internal/service"
-	user2 "github.com/Insid1/go-auth-user/internal/service/user"
+	"github.com/Insid1/go-auth-user/internal/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-type UserHandler struct {
-	service service2.User
+type Handler struct {
+	Service service.User
 }
 
-func (u UserHandler) Create(ctx *gin.Context) {
-	var user entity.User
+func (u Handler) Create(ctx *gin.Context) {
+	var usr entity.User
 	uid := uuid.New()
 
-	if err := ctx.BindJSON(&user); err != nil {
+	if err := ctx.BindJSON(&usr); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	user.Id = uid.String()
+	usr.Id = uid.String()
 
-	userID, err := u.service.Create(&user)
+	userID, err := u.Service.Create(&usr)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -35,10 +33,10 @@ func (u UserHandler) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, userID)
 }
 
-func (u UserHandler) Get(ctx *gin.Context) {
+func (u Handler) Get(ctx *gin.Context) {
 	rawUserID := ctx.Param("userID")
 
-	usr, err := u.service.Get(rawUserID)
+	usr, err := u.Service.Get(rawUserID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
@@ -46,14 +44,10 @@ func (u UserHandler) Get(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"user": usr})
 }
 
-func (u UserHandler) Update(ctx *gin.Context) {
+func (u Handler) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": "not implemented"})
 }
 
-func (u UserHandler) Delete(ctx *gin.Context) {
+func (u Handler) Delete(ctx *gin.Context) {
 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": "not implemented"})
-}
-
-func NewUserHandler() handler.User {
-	return &UserHandler{service: user2.NewUserService()}
 }
