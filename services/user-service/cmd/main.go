@@ -1,37 +1,24 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
+	"context"
 	"log"
 
+	"github.com/Insid1/go-auth-user/user-service/internal/app"
 	_ "github.com/lib/pq"
 )
 
-// todo: move to env variables and read them
-const (
-	host     = "localhost"
-	port     = 5440
-	user     = "postgres"
-	password = "postgres"
-	dbname   = "go-auth-user"
-)
-
 func main() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	ctx := context.Background()
+	application, err := app.NewApp(ctx)
 
-	db, err := sql.Open("postgres", psqlInfo)
-	defer db.Close()
 	if err != nil {
-		log.Fatalf("Unable to open connection to DataBase. Error: %s", err)
+		log.Fatalf("Failed to initialize application: %v", err)
 	}
 
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Unable to connect to DataBase. Error: %s", err)
+	if application.Run() != nil {
+		log.Fatalf("Failed to run application: %v", err)
 	}
 
-	fmt.Println("Connected to DataBase")
+	defer application.DB.Close()
 }

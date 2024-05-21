@@ -6,8 +6,8 @@ import (
 )
 
 func UseRoutes(httpEngine *gin.Engine, handler handler.User) {
-	httpEngine.POST("/user", handler.Create)
-	httpEngine.GET("/user/:userID", handler.Get)
-	httpEngine.PUT("/user/:userID", handler.Update)
-	httpEngine.DELETE("/user/:userID", handler.Delete)
+	httpEngine.POST("/user_v1", handler.Create)
+	httpEngine.GET("/user_v1/:userID", handler.Get)
+	httpEngine.PUT("/user_v1/:userID", handler.Update)
+	httpEngine.DELETE("/user_v1/:userID", handler.Delete)
 }

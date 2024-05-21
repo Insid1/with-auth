@@ -41,7 +41,7 @@ func (u Handler) Get(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"user": usr})
+	ctx.JSON(http.StatusOK, gin.H{"user_v1": usr})
 }
 
 func (u Handler) Update(ctx *gin.Context) {
