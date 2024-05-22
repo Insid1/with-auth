@@ -89,7 +89,7 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 }
 
 func (a *App) initProvider(ctx context.Context) error {
-	a.provider = newProvider(ctx)
+	a.provider = newProvider(ctx, a.config, a.DB)
 	return nil
 }
 

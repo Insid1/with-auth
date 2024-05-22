@@ -16,9 +16,9 @@ func main() {
 		log.Fatalf("Failed to initialize application: %v", err)
 	}
 
+	defer application.DB.Close()
+
 	if application.Run() != nil {
 		log.Fatalf("Failed to run application: %v", err)
 	}
-
-	defer application.DB.Close()
 }

@@ -14,3 +14,11 @@ func ToUserFromModel(user *model.User) *user_v1.User {
 		Age:   user.Age,
 	}
 }
+
+func ToModelFromUser(user *user_v1.User) *model.User {
+	return &model.User{
+		Email: user.GetEmail(),
+		Name:  user.GetName().Value,
+		Age:   user.GetAge(),
+	}
+}

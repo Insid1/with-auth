@@ -1,13 +1,15 @@
 syntax = "proto3";
+
 package user_v1;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-option go_package="github.com/Insid1/go-auth-user/services/user-service/user_v1;user_v1";
+option go_package = "github.com/Insid1/go-auth-user/services/user-service/user_v1;user_v1";
 
 service UserV1 {
-  rpc Get(GetRequest) returns (GetResponse);
+  rpc Get (GetRequest) returns (GetResponse);
+  rpc Create (CreateRequest) returns (CreateResponse);
 }
 
 message User {
@@ -25,4 +27,12 @@ message GetRequest {
 
 message GetResponse {
   User user = 1;
+}
+
+message CreateRequest {
+  User user = 1;
+}
+
+message CreateResponse {
+  string id = 1;
 }
