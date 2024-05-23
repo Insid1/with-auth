@@ -6,17 +6,13 @@ import (
 )
 
 type Service struct {
-	repository *repository.Repository
-}
-
-func NewService(repo *repository.Repository) *Service {
-	return &Service{repository: repo}
+	UserRepository repository.User
 }
 
 func (s *Service) Get(id string) (*model.User, error) {
-	return s.repository.UserRepository.Get(id)
+	return s.UserRepository.Get(id)
 }
 
 func (s *Service) Create(usr *model.User) (string, error) {
-	return s.repository.UserRepository.Create(usr)
+	return s.UserRepository.Create(usr)
 }

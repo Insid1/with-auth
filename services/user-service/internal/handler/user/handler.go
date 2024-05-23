@@ -12,17 +12,11 @@ import (
 
 type Handler struct {
 	user_v1.UnimplementedUserV1Server
-	*service.Service
-}
-
-func NewHandler(svc *service.Service) *Handler {
-	return &Handler{
-		Service: svc,
-	}
+	Service service.User
 }
 
 func (h *Handler) Get(ctx context.Context, req *user_v1.GetRequest) (*user_v1.GetResponse, error) {
-	usr, err := h.Service.UserService.Get(req.GetId())
+	usr, err := h.Service.Get(req.GetId())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Internal Error: %s", err.Error())
 	}
@@ -39,7 +33,7 @@ func (h *Handler) Get(ctx context.Context, req *user_v1.GetRequest) (*user_v1.Ge
 func (h *Handler) Create(ctx context.Context, req *user_v1.CreateRequest) (*user_v1.CreateResponse, error) {
 	usr := converter.ToModelFromUser(req.GetUser())
 
-	id, err := h.UserService.Create(usr)
+	id, err := h.Service.Create(usr)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Internal Error: %s", err.Error())

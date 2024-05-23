@@ -7,17 +7,13 @@ import (
 )
 
 type Repository struct {
-	db *sql.DB
-}
-
-func NewRepository(db *sql.DB) *Repository {
-	return &Repository{db: db}
+	DB *sql.DB
 }
 
 func (r *Repository) Get(id string) (*model.User, error) {
 	var usr model.User
 
-	rows, err := r.db.Query("SELECT * FROM \"user\" WHERE id=$1", id)
+	rows, err := r.DB.Query("SELECT * FROM \"user\" WHERE id=$1", id)
 
 	if err != nil {
 		return nil, err
@@ -35,7 +31,7 @@ func (r *Repository) Get(id string) (*model.User, error) {
 
 func (r *Repository) Create(usr *model.User) (string, error) {
 	var id string
-	err := r.db.QueryRow(
+	err := r.DB.QueryRow(
 		"INSERT INTO \"user\" (name, email, age) VALUES ($1, $2, $3) RETURNING id;",
 		usr.Name, usr.Email, usr.Age).Scan(&id)
 

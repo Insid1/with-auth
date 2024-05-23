@@ -5,7 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/Insid1/go-auth-user/user-service/internal/config"
-	"github.com/Insid1/go-auth-user/user-service/internal/handler/user"
+	"github.com/Insid1/go-auth-user/user-service/internal/handler"
 	"github.com/Insid1/go-auth-user/user-service/internal/repository"
 	"github.com/Insid1/go-auth-user/user-service/internal/service"
 )
@@ -15,9 +15,9 @@ type Provider struct {
 	config *config.Config
 	db     *sql.DB
 
-	userHandler *user.Handler
-	service     *service.Service
-	repository  *repository.Repository
+	userHandler handler.User
+	service     service.User
+	repository  repository.User
 }
 
 func newProvider(
@@ -28,25 +28,25 @@ func newProvider(
 	return &Provider{ctx: ctx, config: config, db: db}
 }
 
-func (p *Provider) UserHandler() *user.Handler {
+func (p *Provider) UserHandler() handler.User {
 	if p.userHandler == nil {
-		p.userHandler = user.NewHandler(p.Service())
+		p.userHandler = handler.NewUserHandler(p.ctx, p.Service())
 	}
 
 	return p.userHandler
 }
 
-func (p *Provider) Service() *service.Service {
+func (p *Provider) Service() service.User {
 	if p.service == nil {
-		p.service = service.NewService(p.Repository())
+		p.service = service.NewUserService(p.ctx, p.Repository())
 	}
 
 	return p.service
 }
 
-func (p *Provider) Repository() *repository.Repository {
+func (p *Provider) Repository() repository.User {
 	if p.repository == nil {
-		p.repository = repository.NewRepository(p.db)
+		p.repository = repository.NewUserRepository(p.ctx, p.db)
 	}
 
 	return p.repository
