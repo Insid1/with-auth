@@ -13,17 +13,12 @@ type Repository struct {
 func (r *Repository) Get(id string) (*model.User, error) {
 	var usr model.User
 
-	rows, err := r.DB.Query("SELECT * FROM \"user\" WHERE id=$1", id)
+	err := r.DB.QueryRow(
+		"SELECT id, name, email, age, created_at, updated_at FROM \"user\" WHERE id=$1", id).Scan(
+		&usr.ID, &usr.Name, &usr.Email, &usr.Age, &usr.CreatedAt, &usr.UpdatedAt)
 
 	if err != nil {
 		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		if rows.Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Age) != nil {
-			return nil, err
-		}
 	}
 
 	return &usr, nil
