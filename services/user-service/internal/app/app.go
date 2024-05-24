@@ -41,6 +41,12 @@ func (a *App) Run() error {
 	return nil
 }
 
+func (a *App) Stop() error {
+	a.DB.Close()
+	a.grpcServer.GracefulStop()
+	return nil
+}
+
 func (a *App) initDeps(ctx context.Context) error {
 	arr := []func(ctx context.Context) error{
 		a.initConfig,
@@ -60,19 +66,14 @@ func (a *App) initDeps(ctx context.Context) error {
 }
 
 func (a *App) initConfig(ctx context.Context) error {
-	cfg, err := config.NewConfig()
-	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to init Config. %s", err))
-	}
-
-	a.config = cfg
+	a.config = config.MustLoad()
 	return nil
 
 }
 
 func (a *App) initDataBaseConnection(ctx context.Context) error {
 
-	db, err := sql.Open("postgres", a.config.DB.DataSourceName)
+	db, err := sql.Open("postgres", a.config.Db.DataSourceName())
 	if err != nil {
 		return errors.New(fmt.Sprintf("Unable to Open DB connection. %s", err))
 
@@ -103,9 +104,9 @@ func (a *App) initGRPCServer(_ context.Context) error {
 }
 
 func (a *App) runGRPCServer() error {
-	log.Printf("GRPC server is running on %s", a.config.GRPC.Address())
+	log.Printf("GRPC server is running on %s", a.config.Grpc.Address())
 
-	list, err := net.Listen("tcp", a.config.GRPC.Address())
+	list, err := net.Listen("tcp", a.config.Grpc.Address())
 	if err != nil {
 		return errors.New(fmt.Sprintf("Unable to listen GRPC server. %s", err))
 	}

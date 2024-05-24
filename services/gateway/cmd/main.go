@@ -13,7 +13,7 @@ func main() {
 
 	a, err := app.NewApp(ctx)
 	if err != nil {
-		log.Fatalf("failed to init app: %s", err.Error())
+		log.Fatalf("failed to migrations app: %s", err.Error())
 	}
 
 	err = a.Run("8801")

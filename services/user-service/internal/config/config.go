@@ -1,31 +1,58 @@
 package config
 
+import (
+	"fmt"
+	"log"
+	"net"
+	"os"
+
+	"github.com/ilyakaznacheev/cleanenv"
+)
+
 type Config struct {
-	ENV  *EnvConfig
-	DB   *DBConfig
-	GRPC GRPCConfig
+	Env  string `env:"ENV" env-default:"local"`
+	Db   DBConfig
+	Grpc GRPCConfig
 }
 
-func NewConfig() (*Config, error) {
-	cfg := &Config{}
+type DBConfig struct {
+	Host     string `env:"POSTGRES_HOST"     env-default:"localhost"`
+	Port     string `env:"POSTGRES_PORT"     env-default:"5432"`
+	User     string `env:"POSTGRES_USER"     env-required:"true"`
+	Password string `env:"POSTGRES_PASSWORD" env-required:"true"`
+	DBName   string `env:"POSTGRES_DB"       env-required:"true"`
+}
 
-	env, err := NewEnv()
+type GRPCConfig struct {
+	Host    string `env:"GRPC_HOST"    env-default:"localhost"`
+	Port    string `env:"GRPC_PORT"    env-default:"5433"`
+	Timeout string `env:"GRPC_TIMEOUT" env-default:"5s"`
+}
+
+func MustLoad() *Config {
+
+	cfgPath := ".env"
+
+	_, err := os.Stat(cfgPath)
 	if err != nil {
-		return nil, err
+		log.Fatalf("Config file doesnt exist. Provided path: %s", cfgPath)
 	}
-	cfg.ENV = env
 
-	db, err := NewDB()
-	if err != nil {
-		return nil, err
+	var cfg Config
+
+	if err = cleanenv.ReadConfig(cfgPath, &cfg); err != nil {
+		log.Fatalf("Error reading config: %s", err)
 	}
-	cfg.DB = db
+	println(cfg.Db.DBName)
+	return &cfg
+}
 
-	grpc, err := NewGRPC()
-	if err != nil {
-		return nil, err
-	}
-	cfg.GRPC = grpc
+func (cfg *GRPCConfig) Address() string {
+	return net.JoinHostPort(cfg.Host, cfg.Port)
+}
 
-	return cfg, nil
+func (cfg *DBConfig) DataSourceName() string {
+	return fmt.Sprintf("host=%s port=%s user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName)
 }

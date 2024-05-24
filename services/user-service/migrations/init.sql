@@ -8,4 +8,6 @@ CREATE TABLE "user"
     created_at timestamp DEFAULT now(),
     updated_at timestamp DEFAULT now()
 );
-INSERT INTO "user" (id, name, email, age) VALUES ('8fe7b3f4-18ae-11ef-a7a6-0242ac150002', 'admin', 'admin@admin.admin', 0);
+
+
+INSERT INTO "user" (id, name, email, age) VALUES ('8fe7b3f4-18ae-11ef-a7a6-0242ac150002', 'admin', 'admin@admin.admin', 0) ON CONFLICT DO NOTHING;
