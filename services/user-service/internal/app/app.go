@@ -4,12 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"net"
 
 	"github.com/Insid1/go-auth-user/user-service/internal/config"
 	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
@@ -18,6 +18,7 @@ import (
 type App struct {
 	config     *config.Config
 	DB         *sql.DB
+	Logger     *zap.SugaredLogger
 	grpcServer *grpc.Server
 	provider   *Provider
 }
@@ -42,14 +43,23 @@ func (a *App) Run() error {
 }
 
 func (a *App) Stop() error {
-	a.DB.Close()
 	a.grpcServer.GracefulStop()
+
+	if err := a.DB.Close(); err != nil {
+		return err
+	}
+
+	if err := a.Logger.Sync(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (a *App) initDeps(ctx context.Context) error {
 	arr := []func(ctx context.Context) error{
 		a.initConfig,
+		a.initLogger,
 		a.initDataBaseConnection,
 		a.initProvider,
 		a.initGRPCServer,
@@ -71,6 +81,22 @@ func (a *App) initConfig(ctx context.Context) error {
 
 }
 
+func (a *App) initLogger(ctx context.Context) error {
+	var logger *zap.Logger
+
+	// todo Требует дополнительной доработки по необходимости
+	if a.config.Env == "prod" {
+		logger = zap.Must(zap.NewProduction())
+	} else {
+		logger = zap.Must(zap.NewDevelopment())
+	}
+
+	sugarLogger := logger.Sugar()
+	a.Logger = sugarLogger
+
+	return nil
+}
+
 func (a *App) initDataBaseConnection(ctx context.Context) error {
 
 	db, err := sql.Open("postgres", a.config.Db.DataSourceName())
@@ -83,7 +109,7 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 		return errors.New(fmt.Sprintf("Unable to connect to DB. %s", err))
 	}
 
-	fmt.Println("Connected to DataBase")
+	a.Logger.Info("Connected to DataBase")
 	a.DB = db
 
 	return nil
@@ -104,7 +130,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 }
 
 func (a *App) runGRPCServer() error {
-	log.Printf("GRPC server is running on %s", a.config.Grpc.Address())
+	a.Logger.Infof("GRPC server is running on %s", a.config.Grpc.Address())
 
 	list, err := net.Listen("tcp", a.config.Grpc.Address())
 	if err != nil {

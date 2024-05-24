@@ -23,6 +23,6 @@ func main() {
 	defer application.Stop()
 
 	if application.Run() != nil {
-		log.Fatalf("Failed to run application: %v", err)
+		application.Logger.Errorf("Failed to run application: %v", err)
 	}
 }

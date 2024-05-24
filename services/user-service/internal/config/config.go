@@ -43,7 +43,6 @@ func MustLoad() *Config {
 	if err = cleanenv.ReadConfig(cfgPath, &cfg); err != nil {
 		log.Fatalf("Error reading config: %s", err)
 	}
-	println(cfg.Db.DBName)
 	return &cfg
 }
 
