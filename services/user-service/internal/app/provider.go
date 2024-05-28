@@ -18,6 +18,8 @@ type Provider struct {
 	userHandler handler.User
 	service     service.User
 	repository  repository.User
+
+	authHandler handler.Auth
 }
 
 func newProvider(
@@ -50,4 +52,12 @@ func (p *Provider) Repository() repository.User {
 	}
 
 	return p.repository
+}
+
+func (p *Provider) AuthHandler() handler.Auth {
+	if p.userHandler == nil {
+		p.authHandler = handler.NewAuthHandler(p.ctx)
+	}
+
+	return p.authHandler
 }
