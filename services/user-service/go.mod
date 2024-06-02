@@ -3,7 +3,7 @@ module github.com/Insid1/go-auth-user/user-service
 go 1.22
 
 require (
-	github.com/joho/godotenv v1.5.1 // todo удоли
+	github.com/joho/godotenv v1.5.1 // indirect; todo удоли
 	github.com/lib/pq v1.10.9
 	github.com/pkg/errors v0.9.1
 	google.golang.org/grpc v1.64.0
@@ -11,10 +11,15 @@ require (
 )
 
 require (
+	github.com/ilyakaznacheev/cleanenv v1.5.0
+	go.uber.org/zap v1.27.0
+	golang.org/x/crypto v0.21.0
+)
+
+require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/ilyakaznacheev/cleanenv v1.5.0 // indirect
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

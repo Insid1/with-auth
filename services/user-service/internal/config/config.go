@@ -10,9 +10,10 @@ import (
 )
 
 type Config struct {
-	Env  string `env:"ENV" env-default:"local"`
-	Db   DBConfig
-	Grpc GRPCConfig
+	Env    string `env:"ENV" env-default:"local"`
+	JWTKey string `env:"JWT_SECRET_KEY" env-required:"true"`
+	Db     DBConfig
+	Grpc   GRPCConfig
 }
 
 type DBConfig struct {

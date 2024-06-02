@@ -29,6 +29,8 @@ func NewUserHandler(ctx context.Context, srvc service.User) User {
 	}
 }
 
-func NewAuthHandler(ctx context.Context) Auth {
-	return &auth.Handler{}
+func NewAuthHandler(ctx context.Context, srvc service.Auth) Auth {
+	return &auth.Handler{
+		Service: srvc,
+	}
 }

@@ -2,6 +2,7 @@ package user
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Insid1/go-auth-user/user-service/internal/model"
 )
@@ -16,6 +17,19 @@ func (r *Repository) Get(id string) (*model.User, error) {
 	err := r.DB.QueryRow(
 		"SELECT id, name, email, age, created_at, updated_at FROM \"user\" WHERE id=$1", id).Scan(
 		&usr.ID, &usr.Name, &usr.Email, &usr.Age, &usr.CreatedAt, &usr.UpdatedAt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &usr, nil
+}
+
+func (r *Repository) GetBy(column string, source string) (*model.User, error) {
+	var usr model.User
+	query := fmt.Sprintf("SELECT id, name, email, age, password,created_at, updated_at FROM \"user\" WHERE %s=$1", column)
+
+	err := r.DB.QueryRow(query, source).Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Age, &usr.Password, &usr.CreatedAt, &usr.UpdatedAt)
 
 	if err != nil {
 		return nil, err

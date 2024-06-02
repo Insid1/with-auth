@@ -15,11 +15,12 @@ type Provider struct {
 	config *config.Config
 	db     *sql.DB
 
-	userHandler handler.User
-	service     service.User
-	repository  repository.User
+	userHandler    handler.User
+	userService    service.User
+	userRepository repository.User
 
 	authHandler handler.Auth
+	authService service.Auth
 }
 
 func newProvider(
@@ -32,32 +33,40 @@ func newProvider(
 
 func (p *Provider) UserHandler() handler.User {
 	if p.userHandler == nil {
-		p.userHandler = handler.NewUserHandler(p.ctx, p.Service())
+		p.userHandler = handler.NewUserHandler(p.ctx, p.UserService())
 	}
 
 	return p.userHandler
 }
 
-func (p *Provider) Service() service.User {
-	if p.service == nil {
-		p.service = service.NewUserService(p.ctx, p.Repository())
+func (p *Provider) UserService() service.User {
+	if p.userService == nil {
+		p.userService = service.NewUserService(p.ctx, p.UserRepository())
 	}
 
-	return p.service
+	return p.userService
 }
 
-func (p *Provider) Repository() repository.User {
-	if p.repository == nil {
-		p.repository = repository.NewUserRepository(p.ctx, p.db)
+func (p *Provider) UserRepository() repository.User {
+	if p.userRepository == nil {
+		p.userRepository = repository.NewUserRepository(p.ctx, p.db)
 	}
 
-	return p.repository
+	return p.userRepository
 }
 
 func (p *Provider) AuthHandler() handler.Auth {
 	if p.userHandler == nil {
-		p.authHandler = handler.NewAuthHandler(p.ctx)
+		p.authHandler = handler.NewAuthHandler(p.ctx, p.AuthService())
 	}
 
 	return p.authHandler
+}
+
+func (p *Provider) AuthService() service.Auth {
+	if p.authService == nil {
+		p.authService = service.NewAuthService(p.ctx, p.config.JWTKey, p.UserRepository())
+	}
+
+	return p.authService
 }
