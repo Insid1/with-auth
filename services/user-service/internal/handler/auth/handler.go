@@ -48,6 +48,7 @@ func (h *Handler) Register(ctx context.Context, req *auth_v1.RegisterRequest) (*
 		// todo: можно дообработать ошибку
 		return nil, status.Error(codes.Internal, err.Error())
 	}
+
 	return &auth_v1.RegisterResponse{
 		UserId: userID,
 	}, nil

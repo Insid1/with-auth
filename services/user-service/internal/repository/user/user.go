@@ -41,8 +41,8 @@ func (r *Repository) GetBy(column string, source string) (*model.User, error) {
 func (r *Repository) Create(usr *model.User) (string, error) {
 	var id string
 	err := r.DB.QueryRow(
-		"INSERT INTO \"user\" (name, email, age) VALUES ($1, $2, $3) RETURNING id;",
-		usr.Name, usr.Email, usr.Age).Scan(&id)
+		"INSERT INTO \"user\" (name, email, age, password) VALUES ($1, $2, $3, $4) RETURNING id;",
+		usr.Name, usr.Email, usr.Age, usr.Password).Scan(&id)
 
 	if err != nil {
 		return "", err
