@@ -7,7 +7,6 @@ import (
 	"net"
 
 	"github.com/Insid1/go-auth-user/user-service/internal/config"
-	"github.com/Insid1/go-auth-user/user-service/pkg/auth_v1"
 	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -123,7 +122,6 @@ func (a *App) initGRPCServer(_ context.Context) error {
 	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
 
 	reflection.Register(a.grpcServer)
-	auth_v1.RegisterAuthV1Server(a.grpcServer, a.provider.AuthHandler())
 
 	user_v1.RegisterUserV1Server(a.grpcServer, a.provider.UserHandler())
 

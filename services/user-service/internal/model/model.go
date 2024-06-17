@@ -11,14 +11,3 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
-
-type Login struct {
-	AppID    int32
-	Email    string
-	Password string
-}
-
-type Register struct {
-	Email    string
-	Password string
-}

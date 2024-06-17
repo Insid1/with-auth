@@ -141,9 +141,8 @@ func (a *App) initGRPCServer(_ context.Context) error {
 
 func (a *App) initGRPCUserClient(ctx context.Context) error {
 	// todo отсутствуют транспортные креды, нужно разобраться что и как
-	// creds := credentials.NewTLS(&tls.Config{})
 	// todo установить параметры через env взависимости от среды
-	connection, err := grpc.NewClient("localhost:5441", grpc.WithInsecure())
+	connection, err := grpc.NewClient("localhost:5441", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}
