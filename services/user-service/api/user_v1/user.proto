@@ -19,10 +19,12 @@ message User {
   google.protobuf.Timestamp updated_at = 4;
   uint32 age = 5;
   google.protobuf.StringValue name = 6; // means it may not exist
+  string pass_hash = 7;
 }
 
 message GetRequest {
   string id = 1;
+  string email = 2;
 }
 
 message GetResponse {

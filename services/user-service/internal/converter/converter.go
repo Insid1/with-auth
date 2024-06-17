@@ -16,6 +16,7 @@ func ToUserFromModel(user *model.User) *user_v1.User {
 		Age:       user.Age,
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		UpdatedAt: timestamppb.New(user.UpdatedAt),
+		PassHash:  user.Password,
 	}
 }
 

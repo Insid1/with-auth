@@ -16,12 +16,12 @@ type Handler struct {
 }
 
 func (h *Handler) Get(ctx context.Context, req *user_v1.GetRequest) (*user_v1.GetResponse, error) {
-	usr, err := h.Service.Get(req.GetId())
+	usr, err := h.Service.Get(req.GetId(), req.GetEmail())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Internal Error: %s", err.Error())
 	}
 
-	if len(usr.ID) == 0 {
+	if len(usr.ID) == 0 && len(usr.Email) == 0 {
 		return nil, status.Errorf(codes.NotFound, "User not found")
 	}
 

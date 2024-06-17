@@ -10,7 +10,7 @@ import (
 )
 
 type User interface {
-	Get(string) (*model.User, error)
+	Get(id string, email string) (*model.User, error)
 	Create(*model.User) (string, error)
 }
 

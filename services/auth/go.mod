@@ -3,9 +3,11 @@ module github.com/Insid1/go-auth-user/auth-service
 go 1.22.3
 
 require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/lib/pq v1.10.9
 	go.uber.org/zap v1.27.0
+	golang.org/x/crypto v0.21.0
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.33.0
 )

@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/Insid1/go-auth-user/auth-service/internal/common"
 	"github.com/Insid1/go-auth-user/auth-service/internal/config"
 	"github.com/Insid1/go-auth-user/auth-service/pkg/auth_v1"
+	"github.com/Insid1/go-auth-user/auth-service/pkg/user_v1"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -16,11 +18,12 @@ import (
 )
 
 type App struct {
-	config     *config.Config
-	DB         *sql.DB
-	Logger     *zap.SugaredLogger
-	grpcServer *grpc.Server
-	provider   *Provider
+	config         *config.Config
+	DB             *sql.DB
+	Logger         *zap.SugaredLogger
+	grpcServer     *grpc.Server
+	grpcUserClient *common.GRPCClient[user_v1.UserV1Client]
+	provider       *Provider
 }
 
 func NewApp(ctx context.Context) (*App, error) {
@@ -48,6 +51,9 @@ func (a *App) Stop() error {
 	if err := a.DB.Close(); err != nil {
 		return err
 	}
+	if err := a.grpcUserClient.Connection.Close(); err != nil {
+		return err
+	}
 
 	a.Logger.Sync()
 
@@ -59,6 +65,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initConfig,
 		a.initLogger,
 		a.initDataBaseConnection,
+		a.initGRPCUserClient,
 		a.initProvider,
 		a.initGRPCServer,
 	}
@@ -99,7 +106,7 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 
 	db, err := sql.Open("postgres", a.config.Db.DataSourceName())
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to Open DB connection. %s", err))
+		return errors.New(fmt.Sprintf("Unable to Open DB Connection. %s", err))
 
 	}
 	err = db.Ping()
@@ -114,7 +121,7 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 }
 
 func (a *App) initProvider(ctx context.Context) error {
-	provider, err := newProvider(ctx, a.config, a.DB)
+	provider, err := newProvider(ctx, a.config, a.DB, a.grpcUserClient)
 	if err != nil {
 		return err
 	}
@@ -129,6 +136,22 @@ func (a *App) initGRPCServer(_ context.Context) error {
 	reflection.Register(a.grpcServer)
 	auth_v1.RegisterAuthV1Server(a.grpcServer, a.provider.AuthHandler())
 
+	return nil
+}
+
+func (a *App) initGRPCUserClient(ctx context.Context) error {
+	// todo отсутствуют транспортные креды, нужно разобраться что и как
+	// creds := credentials.NewTLS(&tls.Config{})
+	// todo установить параметры через env взависимости от среды
+	connection, err := grpc.NewClient("localhost:5441", grpc.WithInsecure())
+	if err != nil {
+		return err
+	}
+
+	a.grpcUserClient = &common.GRPCClient[user_v1.UserV1Client]{
+		Client:     user_v1.NewUserV1Client(connection),
+		Connection: connection,
+	}
 	return nil
 }
 

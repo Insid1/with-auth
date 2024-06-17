@@ -5,19 +5,17 @@ import (
 	"github.com/Insid1/go-auth-user/auth-service/pkg/auth_v1"
 )
 
-func toLoginModelFromReq(req *auth_v1.LoginRequest) *model.Login {
-	email := req.GetEmail()
+func ToLoginModelFromReq(req *auth_v1.LoginRequest) *model.Login {
 	return &model.Login{
-		Email:    &email,
+		Email:    req.GetEmail(),
 		Password: req.GetPassword(),
 	}
 }
 
-func toRegisterModelFromReq(req *auth_v1.RegisterRequest) *model.Register {
-	email := req.GetEmail()
+func ToRegisterModelFromReq(req *auth_v1.RegisterRequest) *model.Register {
 
 	return &model.Register{
-		Email:    &email,
+		Email:    req.GetEmail(),
 		Password: req.GetPassword(),
 	}
 }
