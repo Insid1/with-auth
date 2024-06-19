@@ -24,5 +24,6 @@ func (s *Service) Get(id string, email string) (*model.User, error) {
 }
 
 func (s *Service) Create(usr *model.User) (string, error) {
+
 	return s.UserRepository.Create(usr)
 }

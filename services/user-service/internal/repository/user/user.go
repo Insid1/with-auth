@@ -29,7 +29,7 @@ func (r *Repository) GetBy(column string, source string) (*model.User, error) {
 	var usr model.User
 	query := fmt.Sprintf("SELECT id, name, email, age, password,created_at, updated_at FROM \"user\" WHERE %s=$1", column)
 
-	err := r.DB.QueryRow(query, source).Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Age, &usr.Password, &usr.CreatedAt, &usr.UpdatedAt)
+	err := r.DB.QueryRow(query, source).Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Age, &usr.PassHash, &usr.CreatedAt, &usr.UpdatedAt)
 
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (r *Repository) Create(usr *model.User) (string, error) {
 	var id string
 	err := r.DB.QueryRow(
 		"INSERT INTO \"user\" (name, email, age, password) VALUES ($1, $2, $3, $4) RETURNING id;",
-		usr.Name, usr.Email, usr.Age, usr.Password).Scan(&id)
+		usr.Name, usr.Email, usr.Age, usr.PassHash).Scan(&id)
 
 	if err != nil {
 		return "", err

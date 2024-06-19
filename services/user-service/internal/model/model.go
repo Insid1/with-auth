@@ -7,7 +7,7 @@ type User struct {
 	Name      string
 	Email     string
 	Age       uint32
-	Password  string
+	PassHash  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
