@@ -34,7 +34,7 @@ func (s *Service) Login(data *model.Login) (string, error) {
 		return "", errors.New(fmt.Sprintf("Error: Password is invalid. %s", err))
 	}
 
-	token, err := s.generateToken(usr.GetId(), usr.GetEmail(), usr.GetPassHash())
+	token, err := s.generateAccessToken(usr.GetId(), usr.GetEmail(), usr.GetPassHash())
 	if err != nil {
 		return "", err
 	}
@@ -61,12 +61,25 @@ func (s *Service) Logout(string) (bool, error) {
 	return false, nil
 }
 
-func (s *Service) generateToken(id string, email string, passHash string) (string, error) {
+func (s *Service) generateAccessToken(id string, email string, passHash string) (string, error) {
 	// Генерируем полезные данные, которые будут храниться в токене
 	payload := jwt.MapClaims{
 		"sub":   id,
 		"email": email,
 		"exp":   time.Now().Add(time.Hour * 3).Unix(),
+	}
+
+	// Создаем новый JWT-токен и подписываем его по алгоритму HS256
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
+
+	return token.SignedString([]byte(s.JWTKey + passHash))
+}
+
+func (s *Service) generateRefreshToken(id string, passHash string) (string, error) {
+	// Генерируем полезные данные, которые будут храниться в токене
+	payload := jwt.MapClaims{
+		"sub": id,
+		"exp": time.Now().Add(time.Hour * 72).Unix(),
 	}
 
 	// Создаем новый JWT-токен и подписываем его по алгоритму HS256
