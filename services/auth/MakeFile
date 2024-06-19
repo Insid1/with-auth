@@ -21,7 +21,7 @@ generate-auth-api:
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
 	api/auth_v1/auth.proto
 
-#todo подумать правильно ли так генерировать прото,
+# todo подумать правильно ли так генерировать прото
 generate-user-api:
 	mkdir -p pkg/user_v1;
 	protoc --proto_path ../user-service/api/user_v1 \

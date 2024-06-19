@@ -41,10 +41,23 @@ func (s *Service) Login(data *model.Login) (string, error) {
 
 	return token, nil
 }
-func (s *Service) Register(*model.Register) (string, error) {
-	return "", nil
+
+func (s *Service) Register(data *model.Register) (string, error) {
+	passHash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	userID, err := s.UserRepository.Create(data.Email, string(passHash))
+	if err != nil {
+		return "", errors.New(fmt.Sprintf("Error: Unable to create user. %s", err))
+	}
+
+	return userID, nil
 }
+
 func (s *Service) Logout(string) (bool, error) {
+	// удалять refresh токен из БД
 	return false, nil
 }
 

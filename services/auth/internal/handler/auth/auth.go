@@ -27,3 +27,14 @@ func (h *Handler) Login(ctx context.Context, req *auth_v1.LoginRequest) (*auth_v
 		Token: token,
 	}, nil
 }
+
+func (h *Handler) Register(ctx context.Context, req *auth_v1.RegisterRequest) (*auth_v1.RegisterResponse, error) {
+	userID, err := h.AuthService.Register(converter.ToRegisterModelFromReq(req))
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &auth_v1.RegisterResponse{
+		UserId: userID,
+	}, nil
+}

@@ -10,6 +10,7 @@ import (
 
 type User interface {
 	Get(userID string, email string) (*user_v1.User, error)
+	Create(email string, passHash string) (string, error)
 }
 
 func NewUserRepository(ctx context.Context, client *common.GRPCClient[user_v1.UserV1Client]) User {
