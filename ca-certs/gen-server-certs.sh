@@ -17,7 +17,7 @@ mkdir -p "$cert_path";
 rm "$cert_path"/server*.pem;
 
 # 1. Создание приватного ключа для сервера и запроса на подписание сертификата(CSR).
-openssl req -newkey rsa:4096 -nodes -keyout "$cert_path/server-key.pem" -out "$cert_path/server-req.pem" -subj "/C=RU/ST=NSK/L=Novosibirsk/O=IT/OU=EDU/CN=localhost/emailAddress=admin@admin.com"
+openssl req -newkey rsa:4096 -nodes -keyout "$cert_path/server-key.pem" -out "$cert_path/server-req.pem" -subj "/C=FR/ST=Occitanie/L=Toulouse/O=Tech School/OU=Education/CN=*.techschool.guru/emailAddress=techschool.guru@gmail.com"
 
 # 2. Использование приватного ключа ЦС для подписания запроса на подписание сертификата(CSR) и получения подписанного сертификата.
 openssl x509 -req -in "$cert_path/server-req.pem" -days 60 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out "$cert_path/server-cert.pem" -extfile server-ext.cnf

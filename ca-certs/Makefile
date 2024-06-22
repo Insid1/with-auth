@@ -1,5 +1,6 @@
 TARGET_DIRECTORY := ../services
 
+# Генерация сертификатов сервера и клиента для всех сервисов в папке services с уже существующими сертификатами ЦС
 gen-for-all-services:
 	@for dir in "$(TARGET_DIRECTORY)"/*/; do \
 		if [ -d "$$dir" ]; then \
@@ -10,5 +11,6 @@ gen-for-all-services:
 		fi \
 	done
 
+# Генерация сертификатов ЦС и затем генерация сертификатов для всех сервисов
 all:
 	@sh gen.sh && make gen-for-all-services;
