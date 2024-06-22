@@ -10,7 +10,11 @@ import (
 	"github.com/Insid1/go-auth-user/auth-service/internal/common"
 	"github.com/Insid1/go-auth-user/auth-service/internal/config"
 	"github.com/Insid1/go-auth-user/auth-service/pkg/auth_v1"
-	"github.com/Insid1/go-auth-user/auth-service/pkg/user_v1"
+
+	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
+
+	"github.com/Insid1/go-auth-user/pkg/utils"
+
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -140,9 +144,19 @@ func (a *App) initGRPCServer(_ context.Context) error {
 }
 
 func (a *App) initGRPCUserClient(ctx context.Context) error {
-	// todo отсутствуют транспортные креды, нужно разобраться что и как
-	// todo установить параметры через env взависимости от среды
-	connection, err := grpc.NewClient("localhost:5441", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// Загрузка TLS сертификата
+	creds, err := utils.LoadTLSCredentials(&utils.CredentialParams{
+		CAClientCertPath: "../../ca-certs/ca-cert.pem",
+		CAServerCertPath: "../../ca-certs/ca-cert.pem",
+		CertPath:         "pkg/certs/client-cert.pem",
+		CertKeyPath:      "pkg/certs/client-key.pem",
+	})
+	if err != nil {
+		return errors.New(fmt.Sprintf("Unable to load TLS credentials. %s", err))
+	}
+
+	// todo установить параметры через env в зависимости от среды
+	connection, err := grpc.NewClient("127.0.0.1:5441", grpc.WithTransportCredentials(creds))
 	if err != nil {
 		return err
 	}

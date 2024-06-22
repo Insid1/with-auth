@@ -9,7 +9,8 @@ import (
 	"github.com/Insid1/go-auth-user/auth-service/internal/handler"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
 	"github.com/Insid1/go-auth-user/auth-service/internal/service"
-	"github.com/Insid1/go-auth-user/auth-service/pkg/user_v1"
+
+	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
 )
 
 type Provider struct {

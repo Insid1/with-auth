@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthV1_Register_FullMethodName = "/user_v1.AuthV1/Register"
-	AuthV1_Login_FullMethodName    = "/user_v1.AuthV1/Login"
-	AuthV1_Logout_FullMethodName   = "/user_v1.AuthV1/Logout"
+	AuthV1_Register_FullMethodName = "/auth_v1.AuthV1/Register"
+	AuthV1_Login_FullMethodName    = "/auth_v1.AuthV1/Login"
+	AuthV1_Logout_FullMethodName   = "/auth_v1.AuthV1/Logout"
 )
 
 // AuthV1Client is the client API for AuthV1 service.
@@ -168,7 +168,7 @@ func _AuthV1_Logout_Handler(srv interface{}, ctx context.Context, dec func(inter
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthV1_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "user_v1.AuthV1",
+	ServiceName: "auth_v1.AuthV1",
 	HandlerType: (*AuthV1Server)(nil),
 	Methods: []grpc.MethodDesc{
 		{

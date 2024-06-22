@@ -5,7 +5,8 @@ import (
 
 	"github.com/Insid1/go-auth-user/auth-service/internal/common"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository/user"
-	"github.com/Insid1/go-auth-user/auth-service/pkg/user_v1"
+
+	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
 )
 
 type User interface {

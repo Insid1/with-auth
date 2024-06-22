@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package user_v1;
+package auth_v1;
 
 option go_package = "github.com/Insid1/go-auth-user/services/user-service/auth_v1;auth_v1";
 
