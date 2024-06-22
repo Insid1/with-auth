@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/Insid1/go-auth-user/pkg/utils"
+
 	"github.com/Insid1/go-auth-user/user-service/internal/config"
 	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -119,7 +120,17 @@ func (a *App) initProvider(ctx context.Context) error {
 }
 
 func (a *App) initGRPCServer(_ context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+
+	creds, err := utils.LoadTLSCredentials(&utils.CredentialParams{
+		CAClientCertPath: a.config.Security.CAClientCertPath,
+		CAServerCertPath: a.config.Security.CAServerCertPath,
+		CertPath:         a.config.Security.ServerCertPath,
+		CertKeyPath:      a.config.Security.ServerKeyPath,
+	})
+	if err != nil {
+		return errors.New(fmt.Sprintf("Unable to load credentials. %s", err))
+	}
+	a.grpcServer = grpc.NewServer(grpc.Creds(creds))
 
 	reflection.Register(a.grpcServer)
 
