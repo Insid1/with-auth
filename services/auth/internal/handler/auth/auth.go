@@ -18,13 +18,14 @@ type Handler struct {
 }
 
 func (h *Handler) Login(ctx context.Context, req *auth_v1.LoginRequest) (*auth_v1.LoginResponse, error) {
-	token, err := h.AuthService.Login(converter.ToLoginModelFromReq(req))
+	tokenPair, err := h.AuthService.Login(converter.ToLoginModelFromReq(req))
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &auth_v1.LoginResponse{
-		Token: token,
+		AuthToken:    tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
 	}, nil
 }
 

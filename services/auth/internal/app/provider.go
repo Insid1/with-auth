@@ -19,8 +19,9 @@ type Provider struct {
 	db             *sql.DB
 	grpcUserClient *common.GRPCClient[user_v1.UserV1Client]
 
-	authHandler handler.Auth
-	authService service.Auth
+	authHandler    handler.Auth
+	authService    service.Auth
+	authRepository repository.Auth
 
 	userRepository repository.User
 }
@@ -44,7 +45,7 @@ func (p *Provider) AuthHandler() handler.Auth {
 
 func (p *Provider) AuthService() service.Auth {
 	if p.authService == nil {
-		p.authService = service.NewAuthService(p.ctx, p.config.JWTKey, p.UserRepository())
+		p.authService = service.NewAuthService(p.ctx, p.config.JWTKey, p.UserRepository(), p.AuthRepository())
 	}
 
 	return p.authService
@@ -56,4 +57,12 @@ func (p *Provider) UserRepository() repository.User {
 	}
 
 	return p.userRepository
+}
+
+func (p *Provider) AuthRepository() repository.Auth {
+	if p.authRepository == nil {
+		p.authRepository = repository.NewAuthRepository(p.ctx, p.db)
+	}
+
+	return p.authRepository
 }

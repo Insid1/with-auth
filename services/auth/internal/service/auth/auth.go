@@ -8,7 +8,6 @@ import (
 
 	"github.com/Insid1/go-auth-user/auth-service/internal/model"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
-
 	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
 
 	"github.com/golang-jwt/jwt"
@@ -20,28 +19,47 @@ type Service struct {
 	JWTKey string
 
 	UserRepository repository.User
+	AuthRepository repository.Auth
 }
 
-func (s *Service) Login(data *model.Login) (string, error) {
+type TokenPair struct {
+	AccessToken  string
+	RefreshToken string
+}
+
+func (s *Service) Login(data *model.Login) (*TokenPair, error) {
 	var usr *user_v1.User
 
 	usr, err := s.UserRepository.Get(data.ID, data.Email)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(usr.GetPassHash()), []byte(data.Password))
 	if err != nil {
-		return "", errors.New(fmt.Sprintf("Error: Password is invalid. %s", err))
+		return nil, fmt.Errorf("error: Password is invalid. %s", err)
 	}
 
 	token, err := s.generateAccessToken(usr.GetId(), usr.GetEmail(), usr.GetPassHash())
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return token, nil
+	refreshToken, err := s.generateRefreshToken(usr.GetId(), usr.GetPassHash())
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.AuthRepository.SaveToken(refreshToken, usr.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &TokenPair{
+		AccessToken:  token,
+		RefreshToken: refreshToken,
+	}, nil
 }
 
 func (s *Service) Register(data *model.Register) (string, error) {

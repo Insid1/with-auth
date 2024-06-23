@@ -9,6 +9,6 @@ CREATE TABLE "token"
 );
 
 
-INSERT INTO "token" (id, token, user_id)
-VALUES ('8fe7b3f4-18ae-11ef-a7a6-0242ac150002', '1', '8fe7b3f4-18ae-11ef-a7a6-0242ac150002')
-ON CONFLICT DO NOTHING;
+-- INSERT INTO "token" (id, token, user_id)
+-- VALUES ('8fe7b3f4-18ae-11ef-a7a6-0242ac150002', '1', '8fe7b3f4-18ae-11ef-a7a6-0242ac150002')
+-- ON CONFLICT DO NOTHING;
