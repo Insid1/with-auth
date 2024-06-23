@@ -1,4 +1,4 @@
-module github.com/Insid1/go-auth-user/user-service
+module github.com/Insid1/go-auth-user/user
 
 go 1.22.3
 

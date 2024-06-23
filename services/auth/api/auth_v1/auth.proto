@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth_v1;
 
-option go_package = "github.com/Insid1/go-auth-user/services/user-service/auth_v1;auth_v1";
+option go_package = "github.com/Insid1/go-auth-user/services/user/auth_v1;auth_v1";
 
 service AuthV1 {
   // Register registers a new user.

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/Insid1/go-auth-user/user-service/internal/model"
+	"github.com/Insid1/go-auth-user/user/internal/model"
 )
 
 type Repository struct {

@@ -9,7 +9,7 @@ import (
 	"github.com/Insid1/go-auth-user/auth-service/internal/model"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
 
-	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
+	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"

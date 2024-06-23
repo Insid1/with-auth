@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	github.com/Insid1/go-auth-user/pkg/utils v0.0.0
-	github.com/Insid1/go-auth-user/user-service v0.0.0
+	github.com/Insid1/go-auth-user/user v0.0.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/lib/pq v1.10.9
@@ -15,8 +15,7 @@ require (
 )
 
 replace github.com/Insid1/go-auth-user/pkg/utils => ../pkg/utils
-
-replace github.com/Insid1/go-auth-user/user-service => ../user-service
+replace github.com/Insid1/go-auth-user/user => ../user
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect

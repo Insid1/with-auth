@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 
-	"github.com/Insid1/go-auth-user/user-service/internal/converter"
-	"github.com/Insid1/go-auth-user/user-service/internal/service"
-	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
+	"github.com/Insid1/go-auth-user/user/internal/converter"
+	"github.com/Insid1/go-auth-user/user/internal/service"
+	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

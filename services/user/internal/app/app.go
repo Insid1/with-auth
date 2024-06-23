@@ -7,10 +7,9 @@ import (
 	"net"
 
 	"github.com/Insid1/go-auth-user/pkg/utils"
+	"github.com/Insid1/go-auth-user/user/internal/config"
+	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
 
-	"github.com/Insid1/go-auth-user/user-service/internal/config"
-	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -100,12 +99,12 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 
 	db, err := sql.Open("postgres", a.config.Db.DataSourceName())
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to Open DB connection. %s", err))
-
+		return fmt.Errorf("unable to Open DB connection. %s", err)
 	}
+
 	err = db.Ping()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to connect to DB. %s", err))
+		return fmt.Errorf("unable to connect to DB. %s", err)
 	}
 
 	a.Logger.Info("Connected to DataBase")
@@ -128,7 +127,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 		CertKeyPath:      a.config.Security.ServerKeyPath,
 	})
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to load credentials. %s", err))
+		return fmt.Errorf("unable to load credentials. %s", err)
 	}
 	a.grpcServer = grpc.NewServer(grpc.Creds(creds))
 
@@ -140,16 +139,16 @@ func (a *App) initGRPCServer(_ context.Context) error {
 }
 
 func (a *App) runGRPCServer() error {
-	a.Logger.Infof("GRPC server is running on %s", a.config.Grpc.Address())
+	a.Logger.Infof("GRPC user server is running on %s", a.config.Global.Service.User.Server.Address())
 
-	list, err := net.Listen("tcp", a.config.Grpc.Address())
+	list, err := net.Listen("tcp", a.config.Global.Service.User.Server.Address())
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to listen GRPC server. %s", err))
+		return fmt.Errorf("unable to listen GRPC user server. %s", err)
 	}
 
 	err = a.grpcServer.Serve(list)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to serve GRPC server. %s", err))
+		return fmt.Errorf("unable to serve GRPC user server. %s", err)
 	}
 
 	return nil

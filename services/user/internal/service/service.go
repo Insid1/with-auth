@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"github.com/Insid1/go-auth-user/user-service/internal/model"
-	"github.com/Insid1/go-auth-user/user-service/internal/repository"
-	"github.com/Insid1/go-auth-user/user-service/internal/service/user"
+	"github.com/Insid1/go-auth-user/user/internal/model"
+	"github.com/Insid1/go-auth-user/user/internal/repository"
+	"github.com/Insid1/go-auth-user/user/internal/service/user"
 )
 
 type User interface {

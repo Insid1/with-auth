@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/Insid1/go-auth-user/user-service/internal/config"
-	"github.com/Insid1/go-auth-user/user-service/internal/handler"
-	"github.com/Insid1/go-auth-user/user-service/internal/repository"
-	"github.com/Insid1/go-auth-user/user-service/internal/service"
+	"github.com/Insid1/go-auth-user/user/internal/config"
+	"github.com/Insid1/go-auth-user/user/internal/handler"
+	"github.com/Insid1/go-auth-user/user/internal/repository"
+	"github.com/Insid1/go-auth-user/user/internal/service"
 )
 
 type Provider struct {

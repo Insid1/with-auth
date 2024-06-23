@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"github.com/Insid1/go-auth-user/user-service/internal/model"
-	"github.com/Insid1/go-auth-user/user-service/pkg/user_v1"
+	"github.com/Insid1/go-auth-user/user/internal/model"
+	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )

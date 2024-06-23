@@ -5,7 +5,7 @@ package user_v1;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/Insid1/go-auth-user/services/user-service/user_v1;user_v1";
+option go_package = "github.com/Insid1/go-auth-user/services/user/user_v1;user_v1";
 
 service UserV1 {
   rpc Get (GetRequest) returns (GetResponse);

@@ -15,5 +15,5 @@
     GRPC_HOST="localhost"
     GRPC_PORT=5441
     ``` 
-2. Выполни `docker build -t postgres-go-auth .` внутри дирректории `services/user-service`;
-3. Выполни `docker compose up` внутри дирректории `services/user-service`.
+2. Выполни `docker build -t postgres-go-auth .` внутри дирректории `services/user`;
+3. Выполни `docker compose up` внутри дирректории `services/user`.

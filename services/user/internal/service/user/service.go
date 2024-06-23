@@ -3,8 +3,8 @@ package user
 import (
 	"errors"
 
-	"github.com/Insid1/go-auth-user/user-service/internal/model"
-	"github.com/Insid1/go-auth-user/user-service/internal/repository"
+	"github.com/Insid1/go-auth-user/user/internal/model"
+	"github.com/Insid1/go-auth-user/user/internal/repository"
 )
 
 type Service struct {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/Insid1/go-auth-user/user-service/internal/model"
-	"github.com/Insid1/go-auth-user/user-service/internal/repository/user"
+	"github.com/Insid1/go-auth-user/user/internal/model"
+	"github.com/Insid1/go-auth-user/user/internal/repository/user"
 )
 
 type User interface {
