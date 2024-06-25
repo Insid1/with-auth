@@ -12,6 +12,7 @@ type Auth interface {
 	Login(*model.Login) (*auth.TokenPair, error)
 	Register(*model.Register) (string, error)
 	Logout(string) (bool, error)
+	CheckTokens(*model.Check) (*model.Check, error)
 }
 
 func NewAuthService(ctx context.Context, JWTKey string, userRepo repository.User, authRepo repository.Auth) Auth {

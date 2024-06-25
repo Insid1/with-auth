@@ -39,3 +39,15 @@ func (h *Handler) Register(ctx context.Context, req *auth_v1.RegisterRequest) (*
 		UserId: userID,
 	}, nil
 }
+
+func (h *Handler) Check(ctx context.Context, req *auth_v1.CheckRequest) (*auth_v1.CheckResponse, error) {
+	tokenPair, err := h.AuthService.CheckTokens(converter.ToCheckModelFromReq(req))
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &auth_v1.CheckResponse{
+		AuthToken:    tokenPair.AccessToken,
+		RefreshToken: tokenPair.RefreshToken,
+	}, nil
+}

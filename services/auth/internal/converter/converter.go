@@ -19,3 +19,10 @@ func ToRegisterModelFromReq(req *auth_v1.RegisterRequest) *model.Register {
 		Password: req.GetPassword(),
 	}
 }
+
+func ToCheckModelFromReq(req *auth_v1.CheckRequest) *model.Check {
+	return &model.Check{
+		AccessToken:  req.GetAuthToken(),
+		RefreshToken: req.GetRefreshToken(),
+	}
+}

@@ -15,8 +15,8 @@ func (r *Repository) Get(id string) (*model.User, error) {
 	var usr model.User
 
 	err := r.DB.QueryRow(
-		"SELECT id, name, email, age, created_at, updated_at FROM \"user\" WHERE id=$1", id).Scan(
-		&usr.ID, &usr.Name, &usr.Email, &usr.Age, &usr.CreatedAt, &usr.UpdatedAt)
+		"SELECT id, name, email, age, password,created_at, updated_at FROM \"user\" WHERE id=$1", id).Scan(
+		&usr.ID, &usr.Name, &usr.Email, &usr.Age, &usr.PassHash, &usr.CreatedAt, &usr.UpdatedAt)
 
 	if err != nil {
 		return nil, err

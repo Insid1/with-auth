@@ -22,6 +22,7 @@ const (
 	AuthV1_Register_FullMethodName = "/auth_v1.AuthV1/Register"
 	AuthV1_Login_FullMethodName    = "/auth_v1.AuthV1/Login"
 	AuthV1_Logout_FullMethodName   = "/auth_v1.AuthV1/Logout"
+	AuthV1_Check_FullMethodName    = "/auth_v1.AuthV1/Check"
 )
 
 // AuthV1Client is the client API for AuthV1 service.
@@ -32,8 +33,10 @@ type AuthV1Client interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	// Login logs in a user and returns an auth token.
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	// IsAdmin checks whether a user is an admin.
+	// Logout user from all services.
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	// Checks if tokens are valid and generates new ones.
+	Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error)
 }
 
 type authV1Client struct {
@@ -71,6 +74,15 @@ func (c *authV1Client) Logout(ctx context.Context, in *LogoutRequest, opts ...gr
 	return out, nil
 }
 
+func (c *authV1Client) Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error) {
+	out := new(CheckResponse)
+	err := c.cc.Invoke(ctx, AuthV1_Check_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthV1Server is the server API for AuthV1 service.
 // All implementations must embed UnimplementedAuthV1Server
 // for forward compatibility
@@ -79,8 +91,10 @@ type AuthV1Server interface {
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	// Login logs in a user and returns an auth token.
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	// IsAdmin checks whether a user is an admin.
+	// Logout user from all services.
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	// Checks if tokens are valid and generates new ones.
+	Check(context.Context, *CheckRequest) (*CheckResponse, error)
 	mustEmbedUnimplementedAuthV1Server()
 }
 
@@ -96,6 +110,9 @@ func (UnimplementedAuthV1Server) Login(context.Context, *LoginRequest) (*LoginRe
 }
 func (UnimplementedAuthV1Server) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedAuthV1Server) Check(context.Context, *CheckRequest) (*CheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
 }
 func (UnimplementedAuthV1Server) mustEmbedUnimplementedAuthV1Server() {}
 
@@ -164,6 +181,24 @@ func _AuthV1_Logout_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthV1_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthV1Server).Check(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthV1_Check_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthV1Server).Check(ctx, req.(*CheckRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthV1_ServiceDesc is the grpc.ServiceDesc for AuthV1 service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -182,6 +217,10 @@ var AuthV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _AuthV1_Logout_Handler,
+		},
+		{
+			MethodName: "Check",
+			Handler:    _AuthV1_Check_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
