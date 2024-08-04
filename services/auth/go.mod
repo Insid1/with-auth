@@ -15,11 +15,17 @@ require (
 )
 
 replace github.com/Insid1/go-auth-user/pkg/utils => ../pkg/utils
+
 replace github.com/Insid1/go-auth-user/user => ../user
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
+	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
+	github.com/golang-migrate/migrate/v4 v4.17.1 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
+	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
