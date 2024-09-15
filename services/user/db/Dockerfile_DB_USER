@@ -5,12 +5,12 @@ ARG POSTGRES_PASSWORD
 ARG POSTGRES_DBNAME
 
 # Указываем рабочий каталог по умолчанию
-WORKDIR /docker-postgres
+WORKDIR /db
 
 # Используем значение переменной в контейнере
 ENV POSTGRES_USER=$POSTGRES_USER
 ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 ENV POSTGRES_DB=$POSTGRES_DB
 
-# Открываем порт 5432 для удаленных подключений внутри контейнера
+# Говорим, что порт 5432 открыт для подключений внутри контейнера
 EXPOSE 5432

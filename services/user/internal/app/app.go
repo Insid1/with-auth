@@ -118,7 +118,7 @@ func (a *App) initProvider(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) initGRPCServer(_ context.Context) error {
+func (a *App) initGRPCServer(ctx context.Context) error {
 
 	creds, err := utils.LoadTLSCredentials(&utils.CredentialParams{
 		CAClientCertPath: a.config.Security.CAClientCertPath,

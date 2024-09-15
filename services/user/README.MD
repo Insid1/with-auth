@@ -2,7 +2,8 @@
 
 ## При первом запуске
 
-1. Заполни .env;
+### Для Базы данных
+1. Заполни db/.env;
     ```
     EVN="local"
 
@@ -12,8 +13,6 @@
     POSTGRES_PASSWORD="postgres"
     POSTGRES_DB="go-auth-user"
     
-    GRPC_HOST="localhost"
-    GRPC_PORT=5441
     ``` 
-2. Выполни `docker build -t postgres-go-auth .` внутри дирректории `services/user`;
-3. Выполни `docker compose up` внутри дирректории `services/user`.
+2. Выполни `docker build -t go-auth-user-db --file db/Dockerfile_DB_USER .` внутри дирректории `services/user`;
+3. Выполни `docker compose up -d db` внутри дирректории `services/user`.

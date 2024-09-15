@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"context"
 	"database/sql"
 
 	"github.com/Insid1/go-auth-user/user/internal/model"
@@ -14,6 +13,6 @@ type User interface {
 	Create(*model.User) (string, error)
 }
 
-func NewUserRepository(ctx context.Context, db *sql.DB) User {
+func NewUserRepository(db *sql.DB) User {
 	return &user.Repository{DB: db}
 }

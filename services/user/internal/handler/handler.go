@@ -14,7 +14,7 @@ type User interface {
 	Create(context.Context, *user_v1.CreateRequest) (*user_v1.CreateResponse, error)
 }
 
-func NewUserHandler(ctx context.Context, srvc service.User) User {
+func NewUserHandler(srvc service.User) User {
 	return &user.Handler{
 		Service: srvc,
 	}

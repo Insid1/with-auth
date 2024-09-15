@@ -30,13 +30,18 @@ func main() {
 		}
 	}()
 
+	gracefulShutdown(application)
+}
+
+func gracefulShutdown(application *app.App) {
 	// graceful shutdown
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 	sign := <-stop
 
 	application.Logger.Info("Stopping application...", zap.String("signal", sign.String()))
-	err = application.Stop()
+	err := application.Stop()
+
 	if err != nil {
 		application.Logger.Error("Failed to stop application", zap.Error(err))
 	} else {

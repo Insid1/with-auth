@@ -11,7 +11,6 @@ import (
 )
 
 type Provider struct {
-	ctx    context.Context
 	config *config.Config
 	db     *sql.DB
 
@@ -25,12 +24,12 @@ func newProvider(
 	config *config.Config,
 	db *sql.DB,
 ) *Provider {
-	return &Provider{ctx: ctx, config: config, db: db}
+	return &Provider{config: config, db: db}
 }
 
 func (p *Provider) UserHandler() handler.User {
 	if p.userHandler == nil {
-		p.userHandler = handler.NewUserHandler(p.ctx, p.UserService())
+		p.userHandler = handler.NewUserHandler(p.UserService())
 	}
 
 	return p.userHandler
@@ -38,7 +37,7 @@ func (p *Provider) UserHandler() handler.User {
 
 func (p *Provider) UserService() service.User {
 	if p.userService == nil {
-		p.userService = service.NewUserService(p.ctx, p.UserRepository())
+		p.userService = service.NewUserService(p.UserRepository())
 	}
 
 	return p.userService
@@ -46,7 +45,7 @@ func (p *Provider) UserService() service.User {
 
 func (p *Provider) UserRepository() repository.User {
 	if p.userRepository == nil {
-		p.userRepository = repository.NewUserRepository(p.ctx, p.db)
+		p.userRepository = repository.NewUserRepository(p.db)
 	}
 
 	return p.userRepository
