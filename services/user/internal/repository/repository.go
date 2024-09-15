@@ -10,7 +10,9 @@ import (
 type User interface {
 	Get(string) (*model.User, error)
 	GetBy(string, string) (*model.User, error)
-	Create(*model.User) (string, error)
+	Create(*model.User) (*model.User, error)
+	Update(*model.User) (*model.User, error)
+	Delete(string) (string, error)
 }
 
 func NewUserRepository(db *sql.DB) User {

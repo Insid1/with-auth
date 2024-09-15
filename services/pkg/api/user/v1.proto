@@ -3,7 +3,7 @@ syntax = "proto3";
 package user_v1;
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
+// import "google/protobuf/wrappers.proto";
 
 // todo подумай все ли ок тут в пакете ???
 option go_package = "github.com/Insid1/go-auth-user/services/user;user_v1";
@@ -17,12 +17,11 @@ service UserV1 {
 
 message User {
   string id = 1;
-  uint32 username = 2;
+  string username = 2;
   string email = 3;
-  google.protobuf.StringValue name = 4; // means it may not exist
-  string password_hash = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
+  string password_hash = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 message GetReq {
@@ -34,7 +33,7 @@ message GetRes { User user = 1; }
 
 message CreateReq { User user = 1; }
 
-message CreateRes { string id = 1; }
+message CreateRes { User user = 1; }
 
 message DeleteReq { string id = 1; }
 

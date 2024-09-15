@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"database/sql"
 
 	"github.com/Insid1/go-auth-user/user/internal/config"
@@ -20,7 +19,6 @@ type Provider struct {
 }
 
 func newProvider(
-	ctx context.Context,
 	config *config.Config,
 	db *sql.DB,
 ) *Provider {

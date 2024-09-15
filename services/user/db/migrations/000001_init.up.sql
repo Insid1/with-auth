@@ -16,18 +16,3 @@ INSERT INTO
   users (username, email, password_hash)
 VALUES
   ('root', 'root@root.com', 'hashed_password_here');
-
--- Обновление временных меток
-UPDATE
-  users
-SET
-  updated_at = CURRENT_TIMESTAMP
-WHERE
-  id = (
-    SELECT
-      id
-    FROM
-      users
-    WHERE
-      username = 'admin'
-  );

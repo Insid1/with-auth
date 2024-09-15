@@ -1,30 +1,29 @@
 package converter
 
 import (
+	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+
 	"github.com/Insid1/go-auth-user/user/internal/model"
-	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 func ToUserFromModel(user *model.User) *user_v1.User {
 	return &user_v1.User{
-		Id:        user.ID,
-		Email:     user.Email,
-		Name:      wrapperspb.String(user.Name),
-		Age:       user.Age,
-		CreatedAt: timestamppb.New(user.CreatedAt),
-		UpdatedAt: timestamppb.New(user.UpdatedAt),
-		PassHash:  user.PassHash,
+		Id:           user.ID,
+		Email:        user.Email,
+		Username:     user.Name,
+		PasswordHash: "",
+		CreatedAt:    &timestamppb.Timestamp{},
+		UpdatedAt:    &timestamppb.Timestamp{},
 	}
 }
 
 func ToModelFromUser(user *user_v1.User) *model.User {
 	return &model.User{
+		ID:        user.GetId(),
 		Email:     user.GetEmail(),
-		Name:      user.GetName().Value,
-		Age:       user.GetAge(),
-		PassHash:  user.GetPassHash(),
+		Name:      user.GetUsername(),
+		PassHash:  user.GetPasswordHash(),
 		CreatedAt: user.CreatedAt.AsTime(),
 		UpdatedAt: user.UpdatedAt.AsTime(),
 	}

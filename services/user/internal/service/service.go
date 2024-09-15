@@ -8,7 +8,9 @@ import (
 
 type User interface {
 	Get(id string, email string) (*model.User, error)
-	Create(*model.User) (string, error)
+	Create(*model.User) (*model.User, error)
+	Update(*model.User) (*model.User, error)
+	Delete(id string) (string, error)
 }
 
 func NewUserService(repo repository.User) User {

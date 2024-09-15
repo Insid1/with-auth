@@ -23,7 +23,14 @@ func (s *Service) Get(id string, email string) (*model.User, error) {
 	return nil, errors.New("user not found") // actually no data provided for correct req
 }
 
-func (s *Service) Create(usr *model.User) (string, error) {
-
+func (s *Service) Create(usr *model.User) (*model.User, error) {
 	return s.UserRepository.Create(usr)
+}
+
+func (s *Service) Update(usr *model.User) (*model.User, error) {
+	return s.UserRepository.Update(usr)
+}
+
+func (s *Service) Delete(id string) (string, error) {
+	return s.UserRepository.Delete(id)
 }
