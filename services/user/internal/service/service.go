@@ -8,8 +8,9 @@ import (
 
 type User interface {
 	Get(id string, email string) (*model.User, error)
-	Create(*model.User) (*model.User, error)
-	Update(*model.User) (*model.User, error)
+	Create(usr *model.User, password string) (*model.User, error)
+	Update(usr *model.User, password string) (*model.User, error)
+	CheckPassword(id string, password string) (*model.User, error)
 	Delete(id string) (string, error)
 }
 

@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserV1_Create_FullMethodName = "/user_v1.UserV1/Create"
-	UserV1_Get_FullMethodName    = "/user_v1.UserV1/Get"
-	UserV1_Update_FullMethodName = "/user_v1.UserV1/Update"
-	UserV1_Delete_FullMethodName = "/user_v1.UserV1/Delete"
+	UserV1_Create_FullMethodName        = "/user_v1.UserV1/Create"
+	UserV1_Get_FullMethodName           = "/user_v1.UserV1/Get"
+	UserV1_Update_FullMethodName        = "/user_v1.UserV1/Update"
+	UserV1_Delete_FullMethodName        = "/user_v1.UserV1/Delete"
+	UserV1_CheckPassword_FullMethodName = "/user_v1.UserV1/CheckPassword"
 )
 
 // UserV1Client is the client API for UserV1 service.
@@ -33,6 +34,7 @@ type UserV1Client interface {
 	Get(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*GetRes, error)
 	Update(ctx context.Context, in *UpdateReq, opts ...grpc.CallOption) (*UpdateRes, error)
 	Delete(ctx context.Context, in *DeleteReq, opts ...grpc.CallOption) (*DeleteRes, error)
+	CheckPassword(ctx context.Context, in *CheckPasswordReq, opts ...grpc.CallOption) (*CheckPasswordRes, error)
 }
 
 type userV1Client struct {
@@ -79,6 +81,15 @@ func (c *userV1Client) Delete(ctx context.Context, in *DeleteReq, opts ...grpc.C
 	return out, nil
 }
 
+func (c *userV1Client) CheckPassword(ctx context.Context, in *CheckPasswordReq, opts ...grpc.CallOption) (*CheckPasswordRes, error) {
+	out := new(CheckPasswordRes)
+	err := c.cc.Invoke(ctx, UserV1_CheckPassword_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserV1Server is the server API for UserV1 service.
 // All implementations must embed UnimplementedUserV1Server
 // for forward compatibility
@@ -87,6 +98,7 @@ type UserV1Server interface {
 	Get(context.Context, *GetReq) (*GetRes, error)
 	Update(context.Context, *UpdateReq) (*UpdateRes, error)
 	Delete(context.Context, *DeleteReq) (*DeleteRes, error)
+	CheckPassword(context.Context, *CheckPasswordReq) (*CheckPasswordRes, error)
 	mustEmbedUnimplementedUserV1Server()
 }
 
@@ -105,6 +117,9 @@ func (UnimplementedUserV1Server) Update(context.Context, *UpdateReq) (*UpdateRes
 }
 func (UnimplementedUserV1Server) Delete(context.Context, *DeleteReq) (*DeleteRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedUserV1Server) CheckPassword(context.Context, *CheckPasswordReq) (*CheckPasswordRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
 }
 func (UnimplementedUserV1Server) mustEmbedUnimplementedUserV1Server() {}
 
@@ -191,6 +206,24 @@ func _UserV1_Delete_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserV1_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserV1Server).CheckPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserV1_CheckPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserV1Server).CheckPassword(ctx, req.(*CheckPasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserV1_ServiceDesc is the grpc.ServiceDesc for UserV1 service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +246,10 @@ var UserV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _UserV1_Delete_Handler,
+		},
+		{
+			MethodName: "CheckPassword",
+			Handler:    _UserV1_CheckPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

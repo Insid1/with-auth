@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Содержит значения, которые переданы в полях
@@ -71,4 +72,36 @@ func TestBuildUpdateString_4(t *testing.T) {
 	r, _ = usr.BuildUpdateString()
 
 	assert.True(t, strings.Contains(r, "CURRENT_TIMESTAMP"))
+}
+
+// Проверка обновления хэша пароля по переданному паролю
+func TestUpdatePassHash_1(t *testing.T) {
+	var usr User
+
+	assert.Empty(t, usr.PassHash)
+
+	password := "hashed_password_here"
+
+	err := usr.UpdatePassHash(password)
+
+	assert.Nil(t, err)
+	assert.NotEmpty(t, usr.PassHash)
+
+	assert.Nil(t, bcrypt.CompareHashAndPassword([]byte(usr.PassHash), []byte(password)))
+}
+
+// Проверка обновления хэша пароля при пустой строке пароля (Обновления не должно происходить)
+func TestUpdatePassHash_2(t *testing.T) {
+	var usr User
+
+	assert.Empty(t, usr.PassHash)
+
+	usr.PassHash = "some test data"
+
+	password := ""
+
+	err := usr.UpdatePassHash(password)
+
+	assert.NotNil(t, err)
+	assert.Equal(t, usr.PassHash, "some test data")
 }

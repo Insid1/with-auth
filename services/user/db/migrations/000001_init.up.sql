@@ -15,4 +15,8 @@ CREATE TABLE users (
 INSERT INTO
   users (username, email, password_hash)
 VALUES
-  ('root', 'root@root.com', 'hashed_password_here');
+  (
+    'root',
+    'root@root.com',
+    '$2a$10$Hj.S01IaftDzkhumLRzrweNAss2RbuyXb7MF5uR/YgItI92.dlC5O'
+  );

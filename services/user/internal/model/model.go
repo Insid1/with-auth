@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -40,5 +42,19 @@ func (u *User) BuildUpdateString() (string, error) {
 	result, _ = strings.CutSuffix(result, ",")
 
 	return result, nil
+}
 
+func (u *User) UpdatePassHash(password string) error {
+	if password == "" {
+		return fmt.Errorf(`empty password provided`)
+	}
+
+	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	u.PassHash = string(passHash)
+
+	return nil
 }

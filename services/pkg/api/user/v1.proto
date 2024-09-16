@@ -13,13 +13,13 @@ service UserV1 {
   rpc Get(GetReq) returns (GetRes);
   rpc Update(UpdateReq) returns (UpdateRes);
   rpc Delete(DeleteReq) returns (DeleteRes);
+  rpc CheckPassword(CheckPasswordReq) returns (CheckPasswordRes);
 }
 
 message User {
   string id = 1;
   string username = 2;
   string email = 3;
-  string password_hash = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
 }
@@ -31,7 +31,10 @@ message GetReq {
 
 message GetRes { User user = 1; }
 
-message CreateReq { User user = 1; }
+message CreateReq {
+  User user = 1;
+  string password = 2;
+}
 
 message CreateRes { User user = 1; }
 
@@ -39,6 +42,19 @@ message DeleteReq { string id = 1; }
 
 message DeleteRes { string id = 1; }
 
-message UpdateReq { User user = 1; }
+message UpdateReq {
+  User user = 1;
+  string password = 2;
+}
 
 message UpdateRes { User user = 1; }
+
+message CheckPasswordReq {
+  string id = 1;
+  string password = 2;
+}
+
+message CheckPasswordRes {
+  bool success = 1;
+  User user = 2;
+}
