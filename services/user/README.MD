@@ -8,14 +8,19 @@
     EVN="local"
 
     POSTGRES_HOST="localhost"
-    POSTGRES_PORT=5440
     POSTGRES_USER="postgres"
     POSTGRES_PASSWORD="postgres"
     POSTGRES_DB="go-auth-user"
     
     ``` 
-2. Выполни `docker build -t go-auth-user-db --file db/Dockerfile_DB_USER .` внутри дирректории `services/user`;
-3. Выполни `docker compose up -d db` внутри дирректории `services/user`.
+2. Заполни .env;
+    ```
+    EVN="local"
+
+    DB_PORT="5440"
+    ``` 
+3. Выполни `docker build -t go-auth-user-db --file db/Dockerfile_DB_USER .`;
+4. Выполни `docker compose up -d db`
 
 ### Миграции
 1. Создание миграции:

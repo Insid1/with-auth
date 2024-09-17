@@ -18,5 +18,6 @@ VALUES
   (
     'root',
     'root@root.com',
-    '$2a$10$Hj.S01IaftDzkhumLRzrweNAss2RbuyXb7MF5uR/YgItI92.dlC5O'
+    -- пароль: 1234 
+    '$2a$10$kzelwBVIiF5.FsVjv5.R2.wfUxFyeFzdlk1oiEiOl0TV4trdf0i7C'
   );

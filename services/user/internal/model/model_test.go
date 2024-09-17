@@ -16,13 +16,13 @@ func TestBuildUpdateString_1(t *testing.T) {
 
 	usr.ID = "id"
 	usr.Email = "test email"
-	usr.Name = "test name"
+	usr.Username = "test Username"
 	usr.PassHash = "test_pass-hash"
 
 	r, _ := usr.BuildUpdateString()
 
 	assert.True(t, strings.Contains(r, usr.Email))
-	assert.True(t, strings.Contains(r, usr.Name))
+	assert.True(t, strings.Contains(r, usr.Username))
 	assert.True(t, strings.Contains(r, usr.PassHash))
 }
 
@@ -48,7 +48,7 @@ func TestBuildUpdateString_3(t *testing.T) {
 	var usr User
 
 	usr.Email = "test email"
-	usr.Name = "test name"
+	usr.Username = "test name"
 	usr.PassHash = "test_pass-hash"
 
 	r, err := usr.BuildUpdateString()

@@ -10,9 +10,8 @@ import (
 
 type User struct {
 	ID        string
-	Name      string
+	Username  string
 	Email     string
-	Age       uint32
 	PassHash  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -25,8 +24,8 @@ func (u *User) BuildUpdateString() (string, error) {
 
 	var result string
 
-	if u.Name != "" {
-		result += fmt.Sprintf("username='%s',", u.Name)
+	if u.Username != "" {
+		result += fmt.Sprintf("username='%s',", u.Username)
 	}
 	if u.Email != "" {
 		result += fmt.Sprintf("email='%s',", u.Email)

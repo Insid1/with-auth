@@ -16,7 +16,7 @@ func (r *Repository) Get(id string) (*model.User, error) {
 
 	err := r.DB.QueryRow(
 		"SELECT id, username, email, password_hash, created_at, updated_at FROM \"users\" WHERE id=$1", id).Scan(
-		&usr.ID, &usr.Name, &usr.Email, &usr.PassHash, &usr.CreatedAt, &usr.UpdatedAt)
+		&usr.ID, &usr.Username, &usr.Email, &usr.PassHash, &usr.CreatedAt, &usr.UpdatedAt)
 
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (r *Repository) GetBy(column string, source string) (*model.User, error) {
 	var usr model.User
 	query := fmt.Sprintf("SELECT id, username, email, password_hash, created_at, updated_at FROM \"users\" WHERE %s=$1", column)
 
-	err := r.DB.QueryRow(query, source).Scan(&usr.ID, &usr.Name, &usr.Email, &usr.PassHash, &usr.CreatedAt, &usr.UpdatedAt)
+	err := r.DB.QueryRow(query, source).Scan(&usr.ID, &usr.Username, &usr.Email, &usr.PassHash, &usr.CreatedAt, &usr.UpdatedAt)
 
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (r *Repository) Create(usr *model.User) (*model.User, error) {
 
 	err := r.DB.QueryRow(
 		q,
-		usr.Name,
+		usr.Username,
 		usr.Email,
 		usr.PassHash,
 	).Scan(r.getReturningStructFields(&createdUsr)...)
@@ -104,7 +104,7 @@ func (r *Repository) getReturningDBFields() string {
 }
 
 func (r *Repository) getReturningStructFields(usr *model.User) []interface{} {
-	return []interface{}{&usr.ID, &usr.Name, &usr.Email, &usr.PassHash, &usr.CreatedAt, &usr.UpdatedAt}
+	return []interface{}{&usr.ID, &usr.Username, &usr.Email, &usr.PassHash, &usr.CreatedAt, &usr.UpdatedAt}
 }
 
 func (r *Repository) getUsersDBName() string {
