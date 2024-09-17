@@ -96,7 +96,7 @@ func (a *App) initLogger(ctx context.Context) error {
 
 func (a *App) initDataBaseConnection(ctx context.Context) error {
 
-	db, err := sql.Open("postgres", a.config.Db.DataSourceName())
+	db, err := sql.Open("postgres", a.config.GetDataBaseURL())
 	if err != nil {
 		return fmt.Errorf("unable to Open DB connection. %s", err)
 	}
@@ -129,9 +129,9 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 }
 
 func (a *App) runGRPCServer() error {
-	a.Logger.Infof("GRPC user server is running on %s", a.config.Global.Service.User.Server.Address())
+	a.Logger.Infof("GRPC user server is running on %s", a.config.AppAddress())
 
-	list, err := net.Listen("tcp", a.config.Global.Service.User.Server.Address())
+	list, err := net.Listen("tcp", a.config.AppAddress())
 	if err != nil {
 		return fmt.Errorf("unable to listen GRPC user server. %s", err)
 	}
