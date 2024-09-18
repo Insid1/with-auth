@@ -66,7 +66,7 @@ func (h *Handler) Delete(ctx context.Context, req *user_v1.DeleteReq) (*user_v1.
 }
 
 func (h *Handler) CheckPassword(ctx context.Context, req *user_v1.CheckPasswordReq) (*user_v1.CheckPasswordRes, error) {
-	usr, err := h.Service.CheckPassword(req.GetId(), req.GetPassword())
+	usr, err := h.Service.CheckPassword(req.GetId(), req.GetEmail(), req.GetPassword())
 
 	if err != nil {
 		return &user_v1.CheckPasswordRes{

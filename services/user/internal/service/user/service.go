@@ -43,8 +43,18 @@ func (s *Service) Update(usr *model.User, password string) (*model.User, error) 
 	return s.UserRepository.Update(usr)
 }
 
-func (s *Service) CheckPassword(id string, password string) (*model.User, error) {
-	usr, err := s.UserRepository.Get(id)
+func (s *Service) CheckPassword(id string, email, password string) (*model.User, error) {
+	var usr *model.User
+	var err error
+
+	if id != "" {
+		usr, err = s.UserRepository.GetBy("id", id)
+	}
+
+	if usr == nil && email != "" {
+		usr, err = s.UserRepository.GetBy("email", email)
+	}
+
 	if err != nil {
 		return nil, err
 	}

@@ -25,25 +25,23 @@ type AppConfig struct {
 // DBConfig Конфиг Базы данных
 type DBConfig struct {
 	Host     string `env:"POSTGRES_HOST"     env-default:"localhost"`
-	Port     string `env:"DB_PORT"     env-default:"5441"`
+	Port     string `env:"DB_PORT"     env-default:"5440"`
 	Timeout  string `env:"DB_TIMEOUT" env-default:"5"`
 	User     string `env:"POSTGRES_USER"     env-default:"postgres"`
 	Password string `env:"POSTGRES_PASSWORD" env-default:"postgres"`
 	DBName   string `env:"POSTGRES_DB"       env-default:"postgres"`
 }
 
-func ParseConfigFiles[C Config](filePaths ...string) (*C, error) {
-	var cfg C
-
+// ParseConfigFiles gets cfg that implements Config and parses cfg files to extract config fields
+func ParseConfigFiles(cfg interface{}, filePaths ...string) error {
 	for i := 0; i < len(filePaths); i++ {
-		err := cleanenv.ReadConfig(filePaths[i], &cfg)
+		err := cleanenv.ReadConfig(filePaths[i], cfg)
 		if err != nil {
 			log.Printf("Error reading configuration from file: %v", filePaths[i])
-			return nil, err
+			return err
 		}
 	}
-
-	return &cfg, nil
+	return nil
 }
 
 func (cfg *Config) GetDataBaseURL() string {

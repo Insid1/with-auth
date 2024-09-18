@@ -9,7 +9,7 @@ import (
 
 type User interface {
 	Get(id string) (*model.User, error)
-	GetBy(id string, email string) (*model.User, error)
+	GetBy(column string, source string) (*model.User, error)
 	Create(usr *model.User) (*model.User, error)
 	Update(usr *model.User) (*model.User, error)
 	Delete(id string) (string, error)

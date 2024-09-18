@@ -2,11 +2,9 @@ syntax = "proto3";
 
 package user_v1;
 
-import "google/protobuf/timestamp.proto";
-// import "google/protobuf/wrappers.proto";
+option go_package = "github.com/Insid1/go-auth-user/pkg/grpc/user_v1;user_v1";
 
-// todo подумай все ли ок тут в пакете ???
-option go_package = "github.com/Insid1/go-auth-user/services/user;user_v1";
+import "google/protobuf/timestamp.proto";
 
 service UserV1 {
   rpc Create(CreateReq) returns (CreateRes);
@@ -51,7 +49,8 @@ message UpdateRes { User user = 1; }
 
 message CheckPasswordReq {
   string id = 1;
-  string password = 2;
+  string email = 2;
+  string password = 3;
 }
 
 message CheckPasswordRes {

@@ -7,20 +7,19 @@ import (
 )
 
 type Config struct {
-	*commonConfig.Config
+	commonConfig.Config
 }
 
 func MustLoad() *Config {
 
 	configs := []string{"db/.env", ".env"}
 
-	cfg, err := commonConfig.ParseConfigFiles(configs...)
+	var cfg Config
+
+	err := commonConfig.ParseConfigFiles(&cfg, configs...)
 	if err != nil {
 		log.Fatalf("Error reading config: %s", err)
-
 	}
 
-	return &Config{
-		Config: cfg,
-	}
+	return &cfg
 }

@@ -2,7 +2,8 @@ syntax = "proto3";
 
 package auth_v1;
 
-option go_package = "github.com/Insid1/go-auth-user/services/user/auth_v1;auth_v1";
+option go_package = "github.com/Insid1/go-auth-user/pkg/grpc/auth_v1;auth_v1";
+import "user/v1.proto";
 
 service AuthV1 {
   // Register registers a new user.
@@ -20,7 +21,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  string user_id = 1; // User ID of the registered user.
+  repeated user_v1.User user = 1; // User ID of the registered user.
 }
 
 message LoginRequest {
