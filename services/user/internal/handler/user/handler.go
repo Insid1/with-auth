@@ -26,7 +26,8 @@ func (h *Handler) Get(ctx context.Context, req *user_v1.GetReq) (*user_v1.GetRes
 	}
 
 	return &user_v1.GetRes{
-		User: converter.ToUserFromModel(usr),
+		User:     converter.ToUserFromModel(usr),
+		PassHash: usr.PassHash,
 	}, nil
 }
 

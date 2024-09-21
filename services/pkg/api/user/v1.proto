@@ -27,7 +27,10 @@ message GetReq {
   string email = 2;
 }
 
-message GetRes { User user = 1; }
+message GetRes {
+  User user = 1;
+  string pass_hash = 2;
+}
 
 message CreateReq {
   User user = 1;
