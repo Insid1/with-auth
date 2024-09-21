@@ -50,6 +50,6 @@ func (cfg *Config) GetDataBaseURL() string {
 		cfg.Db.Host, cfg.Db.Port, cfg.Db.User, cfg.Db.Password, cfg.Db.DBName)
 }
 
-func (cfg *Config) AppAddress() string {
+func (cfg *Config) GetAppAddress() string {
 	return net.JoinHostPort(cfg.App.Host, cfg.App.Port)
 }

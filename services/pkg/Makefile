@@ -24,6 +24,7 @@ generate-user-api:
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
 	api/user/v1.proto
 
+
 generate-auth-api:
 	mkdir -p $(auth_grpc_result_path);
 	protoc --proto_path api/auth \

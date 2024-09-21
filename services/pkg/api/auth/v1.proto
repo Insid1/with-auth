@@ -21,7 +21,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  repeated user_v1.User user = 1; // User ID of the registered user.
+  user_v1.User user = 1; // User ID of the registered user.
 }
 
 message LoginRequest {

@@ -129,9 +129,9 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 }
 
 func (a *App) runGRPCServer() error {
-	a.Logger.Infof("GRPC user server is running on %s", a.config.AppAddress())
+	a.Logger.Infof("GRPC user server is running on %s", a.config.GetAppAddress())
 
-	list, err := net.Listen("tcp", a.config.AppAddress())
+	list, err := net.Listen("tcp", a.config.GetAppAddress())
 	if err != nil {
 		return fmt.Errorf("unable to listen GRPC user server. %s", err)
 	}
