@@ -10,10 +10,9 @@ import (
 
 	"github.com/Insid1/go-auth-user/auth-service/internal/model"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
-	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
+	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
 
 	"github.com/golang-jwt/jwt"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type RefreshTokenClaims struct {
@@ -39,31 +38,25 @@ type TokenPair struct {
 	RefreshToken string
 }
 
-func (s *Service) Login(data *model.Login) (*TokenPair, error) {
-	var usr *user_v1.User
+func (s *Service) Login(ctx context.Context, data *model.Login) (*TokenPair, error) {
 
-	usr, err := s.UserRepository.Get(data.ID, data.Email)
+	usr, err := s.UserRepository.CheckPassword(ctx, data.Email, data.Password)
 
 	if err != nil {
 		return nil, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(usr.GetPassHash()), []byte(data.Password))
-	if err != nil {
-		return nil, fmt.Errorf("error: Password is invalid. %s", err)
-	}
-
-	token, err := s.generateAccessToken(usr.GetId(), usr.GetEmail(), usr.GetPassHash())
+	token, err := s.generateAccessToken(usr.GetId(), usr.GetEmail())
 	if err != nil {
 		return nil, err
 	}
 
-	refreshToken, err := s.generateRefreshToken(usr.GetId(), usr.GetPassHash())
+	refreshToken, err := s.generateRefreshToken(usr.GetId())
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.AuthRepository.SaveToken(refreshToken, usr.GetId())
+	err = s.AuthRepository.SaveToken(ctx, refreshToken, usr.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -74,26 +67,22 @@ func (s *Service) Login(data *model.Login) (*TokenPair, error) {
 	}, nil
 }
 
-func (s *Service) Register(data *model.Register) (string, error) {
-	passHash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+func (s *Service) Register(ctx context.Context, data *model.Register) (*user_v1.User, error) {
+
+	usr, err := s.UserRepository.Create(ctx, data.Email, data.Password)
 	if err != nil {
-		return "", err
+		return nil, errors.New(fmt.Sprintf("Error: Unable to create user. %s", err))
 	}
 
-	userID, err := s.UserRepository.Create(data.Email, string(passHash))
-	if err != nil {
-		return "", errors.New(fmt.Sprintf("Error: Unable to create user. %s", err))
-	}
-
-	return userID, nil
+	return usr, nil
 }
 
-func (s *Service) Logout(string) (bool, error) {
+func (s *Service) Logout(context.Context, string) (bool, error) {
 	// удалять refresh токен из БД
 	return false, nil
 }
 
-func (s *Service) CheckTokens(tokenPair *model.Check) (*model.Check, error) {
+func (s *Service) CheckTokens(ctx context.Context, tokenPair *model.Check) (*model.Check, error) {
 	var userId string
 
 	if tokenPair.AccessToken != "" {
@@ -114,15 +103,15 @@ func (s *Service) CheckTokens(tokenPair *model.Check) (*model.Check, error) {
 	}
 
 	// Забираем пользовательские данные из другого сервиса
-	usr, err := s.UserRepository.Get(userId, "")
+	usr, err := s.UserRepository.Get(ctx, userId, "")
 	if err != nil {
 		return nil, fmt.Errorf("unable to find user. %s", err)
 	}
 
 	// Проверяем access токен и если тот не валиден, то refresh
-	_, err = s.validateToken(tokenPair.AccessToken, usr.GetPassHash())
+	_, err = s.validateToken(tokenPair.AccessToken)
 	if err != nil {
-		_, err = s.validateToken(tokenPair.RefreshToken, usr.GetPassHash())
+		_, err = s.validateToken(tokenPair.RefreshToken)
 		if err != nil {
 			return nil, err
 		}
@@ -130,11 +119,11 @@ func (s *Service) CheckTokens(tokenPair *model.Check) (*model.Check, error) {
 
 	// Генерируем новые токены
 
-	newAccessToken, err := s.generateAccessToken(usr.GetId(), usr.GetEmail(), usr.GetPassHash())
+	newAccessToken, err := s.generateAccessToken(usr.GetId(), usr.GetEmail())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create access token: %s", err)
 	}
-	newRefreshToken, err := s.generateRefreshToken(usr.GetId(), usr.GetPassHash())
+	newRefreshToken, err := s.generateRefreshToken(usr.GetId())
 	if err != nil {
 		return nil, fmt.Errorf("unable to create refresh token: %s", err)
 	}
@@ -146,7 +135,7 @@ func (s *Service) CheckTokens(tokenPair *model.Check) (*model.Check, error) {
 
 }
 
-func (s *Service) generateAccessToken(id string, email string, passHash string) (string, error) {
+func (s *Service) generateAccessToken(id string, email string) (string, error) {
 	// Генерируем полезные данные, которые будут храниться в токене
 	payload := AccessTokenClaims{
 		StandardClaims: jwt.StandardClaims{
@@ -159,10 +148,10 @@ func (s *Service) generateAccessToken(id string, email string, passHash string) 
 	// Создаем новый JWT-токен и подписываем его по алгоритму HS256
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
-	return token.SignedString([]byte(s.JWTKey + passHash))
+	return token.SignedString([]byte(s.JWTKey))
 }
 
-func (s *Service) generateRefreshToken(id string, passHash string) (string, error) {
+func (s *Service) generateRefreshToken(id string) (string, error) {
 	// Генерируем полезные данные, которые будут храниться в токене
 	payload := RefreshTokenClaims{
 		StandardClaims: jwt.StandardClaims{
@@ -174,7 +163,7 @@ func (s *Service) generateRefreshToken(id string, passHash string) (string, erro
 	// Создаем новый JWT-токен и подписываем его по алгоритму HS256
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
-	return token.SignedString([]byte(s.JWTKey + passHash))
+	return token.SignedString([]byte(s.JWTKey))
 }
 
 func getTokenPayload[T interface{}](token string) (*T, error) {
@@ -201,7 +190,6 @@ func getTokenPayload[T interface{}](token string) (*T, error) {
 
 func (s *Service) validateToken(
 	token string,
-	userPassHash string,
 ) (*jwt.Token, error) {
 	validToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем, что алгоритм подписи тот, что мы ожидаем
@@ -210,7 +198,7 @@ func (s *Service) validateToken(
 		}
 
 		// отдаем ключ подписи
-		return []byte(s.JWTKey + userPassHash), nil
+		return []byte(s.JWTKey), nil
 	})
 
 	if err != nil || !validToken.Valid {

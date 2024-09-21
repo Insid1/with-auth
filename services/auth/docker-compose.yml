@@ -1,19 +1,15 @@
 services:
 
   db:
-    image: postgres-go-auth
+    image: go-auth-auth-db
     restart: always
     # set shared memory limit when using docker-compose
     shm_size: 128mb
-    # or set shared memory limit when deploy via swarm stack
-    #volumes:
-    #  - type: tmpfs
-    #    target: /dev/shm
-    #    tmpfs:
-    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    volumes:
+      - ./db/db_data:/var/lib/postgresql/data
     env_file:
       - .env
     environment:
-      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_PORT: ${DB_PORT}
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${DB_PORT}:5432"

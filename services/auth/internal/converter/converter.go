@@ -1,8 +1,9 @@
 package converter
 
 import (
+	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
+
 	"github.com/Insid1/go-auth-user/auth-service/internal/model"
-	"github.com/Insid1/go-auth-user/auth-service/pkg/auth_v1"
 )
 
 func ToLoginModelFromReq(req *auth_v1.LoginRequest) *model.Login {

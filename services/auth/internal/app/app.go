@@ -9,11 +9,9 @@ import (
 
 	"github.com/Insid1/go-auth-user/auth-service/internal/common"
 	"github.com/Insid1/go-auth-user/auth-service/internal/config"
-	"github.com/Insid1/go-auth-user/auth-service/pkg/auth_v1"
 
-	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
-
-	"github.com/Insid1/go-auth-user/pkg/utils"
+	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
+	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -108,7 +106,7 @@ func (a *App) initLogger(ctx context.Context) error {
 
 func (a *App) initDataBaseConnection(ctx context.Context) error {
 
-	db, err := sql.Open("postgres", a.config.Db.DataSourceName())
+	db, err := sql.Open("postgres", a.config.GetDataBaseURL())
 	if err != nil {
 		return errors.New(fmt.Sprintf("Unable to Open DB Connection. %s", err))
 
@@ -144,18 +142,7 @@ func (a *App) initGRPCServer(_ context.Context) error {
 }
 
 func (a *App) initGRPCUserClient(ctx context.Context) error {
-	// Загрузка TLS сертификата
-	creds, err := utils.LoadTLSCredentials(&utils.CredentialParams{
-		CAClientCertPath: a.config.Security.CAClientCertPath,
-		CAServerCertPath: a.config.Security.CAServerCertPath,
-		CertPath:         a.config.Security.ClientCertPath,
-		CertKeyPath:      a.config.Security.ClientKeyPath,
-	})
-	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to load TLS credentials. %s", err))
-	}
-
-	connection, err := grpc.NewClient(a.config.Global.Service.User.Server.Address(), grpc.WithTransportCredentials(creds))
+	connection, err := grpc.NewClient(a.config.GetUserServiceAddress())
 	if err != nil {
 		return err
 	}
@@ -168,9 +155,9 @@ func (a *App) initGRPCUserClient(ctx context.Context) error {
 }
 
 func (a *App) runGRPCServer() error {
-	a.Logger.Infof("GRPC Auth server is running on %s", a.config.Global.Service.Auth.Server.Address())
+	a.Logger.Infof("GRPC Auth server is running on %s", a.config.GetAppAddress())
 
-	list, err := net.Listen("tcp", a.config.Global.Service.Auth.Server.Address())
+	list, err := net.Listen("tcp", a.config.GetAppAddress())
 	if err != nil {
 		return errors.New(fmt.Sprintf("Unable to listen GRPC Auth server. %s", err))
 	}

@@ -6,20 +6,19 @@ import (
 	"github.com/Insid1/go-auth-user/auth-service/internal/model"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
 	"github.com/Insid1/go-auth-user/auth-service/internal/service/auth"
+	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
 )
 
 type Auth interface {
-	Login(*model.Login) (*auth.TokenPair, error)
-	Register(*model.Register) (string, error)
-	Logout(string) (bool, error)
-	CheckTokens(*model.Check) (*model.Check, error)
+	Login(ctx context.Context, lgn *model.Login) (*auth.TokenPair, error)
+	Register(ctx context.Context, rgst *model.Register) (*user_v1.User, error)
+	Logout(ctx context.Context, refreshToken string) (bool, error)
+	CheckTokens(ctx context.Context, tokens *model.Check) (*model.Check, error)
 }
 
-func NewAuthService(ctx context.Context, JWTKey string, userRepo repository.User, authRepo repository.Auth) Auth {
+func NewAuthService(JWTKey string, userRepo repository.User, authRepo repository.Auth) Auth {
 	return &auth.Service{
-		Ctx:    ctx,
-		JWTKey: JWTKey,
-
+		JWTKey:         JWTKey,
 		UserRepository: userRepo,
 		AuthRepository: authRepo,
 	}

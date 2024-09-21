@@ -5,7 +5,7 @@ ARG POSTGRES_PASSWORD
 ARG POSTGRES_DBNAME
 
 # Указываем рабочий каталог по умолчанию
-WORKDIR /docker-postgres
+WORKDIR /db
 
 # Используем значение переменной в контейнере
 ENV POSTGRES_USER=$POSTGRES_USER

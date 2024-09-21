@@ -5,18 +5,19 @@ import (
 
 	"github.com/Insid1/go-auth-user/auth-service/internal/common"
 
-	"github.com/Insid1/go-auth-user/user/pkg/user_v1"
-
-	"google.golang.org/protobuf/types/known/wrapperspb"
+	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
 )
 
 type Repository struct {
-	Ctx        context.Context
 	UserClient *common.GRPCClient[user_v1.UserV1Client]
 }
 
-func (r *Repository) Get(userID string, email string) (*user_v1.User, error) {
-	resp, err := r.UserClient.Client.Get(r.Ctx, &user_v1.GetRequest{Id: userID, Email: email})
+func (r *Repository) Get(
+	ctx context.Context,
+	userID string,
+	email string,
+) (*user_v1.User, error) {
+	resp, err := r.UserClient.Client.Get(ctx, &user_v1.GetReq{Id: userID, Email: email})
 	if err != nil {
 		return nil, err
 	}
@@ -24,18 +25,34 @@ func (r *Repository) Get(userID string, email string) (*user_v1.User, error) {
 	return resp.GetUser(), nil
 }
 
-func (r *Repository) Create(email string, passHash string) (string, error) {
-	resp, err := r.UserClient.Client.Create(r.Ctx, &user_v1.CreateRequest{
+func (r *Repository) Create(
+	ctx context.Context,
+	email string,
+	password string,
+) (*user_v1.User, error) {
+	resp, err := r.UserClient.Client.Create(ctx, &user_v1.CreateReq{
 		User: &user_v1.User{
 			Email:    email,
-			Age:      0,
-			Name:     &wrapperspb.StringValue{},
-			PassHash: passHash,
+			Username: email,
 		},
+		Password: password,
 	})
+
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return resp.GetId(), nil
+	return resp.GetUser(), nil
+}
+func (r *Repository) CheckPassword(ctx context.Context, email string, password string) (*user_v1.User, error) {
+	resp, err := r.UserClient.Client.CheckPassword(ctx, &user_v1.CheckPasswordReq{
+		Email:    email,
+		Password: password,
+	})
+
+	if resp.Success {
+		return resp.GetUser(), nil
+	}
+
+	return nil, err
 }
