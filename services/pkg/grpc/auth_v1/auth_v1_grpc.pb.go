@@ -19,11 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthV1_Register_FullMethodName  = "/auth_v1.AuthV1/Register"
-	AuthV1_Login_FullMethodName     = "/auth_v1.AuthV1/Login"
-	AuthV1_LogoutAll_FullMethodName = "/auth_v1.AuthV1/LogoutAll"
-	AuthV1_Check_FullMethodName     = "/auth_v1.AuthV1/Check"
-	AuthV1_Refresh_FullMethodName   = "/auth_v1.AuthV1/Refresh"
+	AuthV1_Register_FullMethodName             = "/auth_v1.AuthV1/Register"
+	AuthV1_Login_FullMethodName                = "/auth_v1.AuthV1/Login"
+	AuthV1_LogoutFromAllDevices_FullMethodName = "/auth_v1.AuthV1/LogoutFromAllDevices"
+	AuthV1_Check_FullMethodName                = "/auth_v1.AuthV1/Check"
+	AuthV1_Refresh_FullMethodName              = "/auth_v1.AuthV1/Refresh"
 )
 
 // AuthV1Client is the client API for AuthV1 service.
@@ -34,8 +34,8 @@ type AuthV1Client interface {
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
 	// Login logs in a user and returns an auth token.
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error)
-	// Logout user from all accounts.
-	LogoutAll(ctx context.Context, in *LogoutAllReq, opts ...grpc.CallOption) (*LogoutAllRes, error)
+	// Logout user from all devices.
+	LogoutFromAllDevices(ctx context.Context, in *LogoutFromAllDevicesReq, opts ...grpc.CallOption) (*LogoutFromAllDevicesRes, error)
 	// Checks if Access token is Valid.
 	Check(ctx context.Context, in *CheckReq, opts ...grpc.CallOption) (*CheckRes, error)
 	// Updates Token pair if refresh token is valid.
@@ -68,9 +68,9 @@ func (c *authV1Client) Login(ctx context.Context, in *LoginReq, opts ...grpc.Cal
 	return out, nil
 }
 
-func (c *authV1Client) LogoutAll(ctx context.Context, in *LogoutAllReq, opts ...grpc.CallOption) (*LogoutAllRes, error) {
-	out := new(LogoutAllRes)
-	err := c.cc.Invoke(ctx, AuthV1_LogoutAll_FullMethodName, in, out, opts...)
+func (c *authV1Client) LogoutFromAllDevices(ctx context.Context, in *LogoutFromAllDevicesReq, opts ...grpc.CallOption) (*LogoutFromAllDevicesRes, error) {
+	out := new(LogoutFromAllDevicesRes)
+	err := c.cc.Invoke(ctx, AuthV1_LogoutFromAllDevices_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -103,8 +103,8 @@ type AuthV1Server interface {
 	Register(context.Context, *RegisterReq) (*RegisterRes, error)
 	// Login logs in a user and returns an auth token.
 	Login(context.Context, *LoginReq) (*LoginRes, error)
-	// Logout user from all accounts.
-	LogoutAll(context.Context, *LogoutAllReq) (*LogoutAllRes, error)
+	// Logout user from all devices.
+	LogoutFromAllDevices(context.Context, *LogoutFromAllDevicesReq) (*LogoutFromAllDevicesRes, error)
 	// Checks if Access token is Valid.
 	Check(context.Context, *CheckReq) (*CheckRes, error)
 	// Updates Token pair if refresh token is valid.
@@ -122,8 +122,8 @@ func (UnimplementedAuthV1Server) Register(context.Context, *RegisterReq) (*Regis
 func (UnimplementedAuthV1Server) Login(context.Context, *LoginReq) (*LoginRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthV1Server) LogoutAll(context.Context, *LogoutAllReq) (*LogoutAllRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LogoutAll not implemented")
+func (UnimplementedAuthV1Server) LogoutFromAllDevices(context.Context, *LogoutFromAllDevicesReq) (*LogoutFromAllDevicesRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogoutFromAllDevices not implemented")
 }
 func (UnimplementedAuthV1Server) Check(context.Context, *CheckReq) (*CheckRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
@@ -180,20 +180,20 @@ func _AuthV1_Login_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthV1_LogoutAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LogoutAllReq)
+func _AuthV1_LogoutFromAllDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutFromAllDevicesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthV1Server).LogoutAll(ctx, in)
+		return srv.(AuthV1Server).LogoutFromAllDevices(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthV1_LogoutAll_FullMethodName,
+		FullMethod: AuthV1_LogoutFromAllDevices_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthV1Server).LogoutAll(ctx, req.(*LogoutAllReq))
+		return srv.(AuthV1Server).LogoutFromAllDevices(ctx, req.(*LogoutFromAllDevicesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -250,8 +250,8 @@ var AuthV1_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthV1_Login_Handler,
 		},
 		{
-			MethodName: "LogoutAll",
-			Handler:    _AuthV1_LogoutAll_Handler,
+			MethodName: "LogoutFromAllDevices",
+			Handler:    _AuthV1_LogoutFromAllDevices_Handler,
 		},
 		{
 			MethodName: "Check",

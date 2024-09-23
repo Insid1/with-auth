@@ -10,8 +10,9 @@ service AuthV1 {
   rpc Register(RegisterReq) returns (RegisterRes);
   // Login logs in a user and returns an auth token.
   rpc Login(LoginReq) returns (LoginRes);
-  // Logout user from all accounts.
-  rpc LogoutAll(LogoutAllReq) returns (LogoutAllRes);
+  // Logout user from all devices.
+  rpc LogoutFromAllDevices(LogoutFromAllDevicesReq)
+      returns (LogoutFromAllDevicesRes);
   // Checks if Access token is Valid.
   rpc Check(CheckReq) returns (CheckRes);
   // Updates Token pair if refresh token is valid.
@@ -41,9 +42,9 @@ message LoginReq {
 
 message LoginRes { TokenPair tokenPair = 1; }
 
-message LogoutAllReq { string access_token = 1; }
+message LogoutFromAllDevicesReq { string user_id = 1; }
 
-message LogoutAllRes {
+message LogoutFromAllDevicesRes {
   bool success = 1; // true if response success
 }
 

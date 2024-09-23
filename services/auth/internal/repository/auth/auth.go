@@ -23,7 +23,10 @@ func (r *Repository) GetJWTUserKey(ctx context.Context, userID string) (string, 
 
 func (r *Repository) GenerateJWTUserKey(ctx context.Context, userID string) (string, error) {
 	var jwtKey string
-	err := r.DB.QueryRow("INSERT INTO auth (user_id) VALUES ($1) RETURNING jwt_key;", userID).Scan(&jwtKey)
+	err := r.DB.QueryRow(`INSERT INTO auth (user_id) VALUES ($1)
+	ON CONFLICT (user_id) DO UPDATE SET
+  jwt_key = uuid_generate_v4()
+	RETURNING jwt_key;`, userID).Scan(&jwtKey)
 
 	if err != nil {
 		return "", err

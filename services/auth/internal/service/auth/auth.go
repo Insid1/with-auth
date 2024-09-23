@@ -9,6 +9,7 @@ import (
 
 	"github.com/Insid1/go-auth-user/auth-service/internal/model"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
+	authErrors "github.com/Insid1/go-auth-user/pkg/errors/auth"
 	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
 
 	"github.com/golang-jwt/jwt"
@@ -43,7 +44,7 @@ func (s *Service) Login(ctx context.Context, data *model.Login) (*TokenPair, err
 	usr, err := s.UserRepository.CheckPassword(ctx, data.Email, data.Password)
 
 	if err != nil {
-		return nil, err
+		return nil, authErrors.ErrInvalidCredentials
 	}
 
 	return s.GenerateTokenPair(ctx, usr.GetId(), usr.GetEmail())
@@ -54,7 +55,7 @@ func (s *Service) Register(ctx context.Context, data *model.Register) (*user_v1.
 
 	usr, err := s.UserRepository.Create(ctx, data.Email, data.Password)
 	if err != nil {
-		return nil, fmt.Errorf("error: Unable to create user. %s", err)
+		return nil, err
 	}
 
 	return usr, nil

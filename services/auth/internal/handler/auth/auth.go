@@ -52,20 +52,14 @@ func (h *Handler) Register(ctx context.Context, req *auth_v1.RegisterReq) (*auth
 	}, nil
 }
 
-func (h *Handler) LogoutAll(ctx context.Context, req *auth_v1.LogoutAllReq) (*auth_v1.LogoutAllRes, error) {
-	claims, err := h.AuthService.CheckAccessToken(ctx, req.GetAccessToken())
-
-	if err != nil {
-		return nil, status.Error(codes.PermissionDenied, err.Error())
-	}
-
-	err = h.AuthService.LogoutAll(ctx, claims.Subject)
+func (h *Handler) LogoutFromAllDevices(ctx context.Context, req *auth_v1.LogoutFromAllDevicesReq) (*auth_v1.LogoutFromAllDevicesRes, error) {
+	err := h.AuthService.LogoutAll(ctx, req.GetUserId())
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &auth_v1.LogoutAllRes{
+	return &auth_v1.LogoutFromAllDevicesRes{
 		Success: true,
 	}, nil
 }
