@@ -1,10 +1,9 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE "token"
-(
-    id         uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
-    token      varchar(255) NOT NULL,
-    user_id    varchar(255) NOT NULL,
-    created_at timestamp        DEFAULT now(),
-    updated_at timestamp        DEFAULT now()
-);
+CREATE TABLE auth (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID NOT NULL UNIQUE,
+  jwt_key VARCHAR(255) DEFAULT uuid_generate_v4() NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

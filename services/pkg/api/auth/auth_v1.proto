@@ -7,48 +7,55 @@ import "user/user_v1.proto";
 
 service AuthV1 {
   // Register registers a new user.
-  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Register(RegisterReq) returns (RegisterRes);
   // Login logs in a user and returns an auth token.
-  rpc Login(LoginRequest) returns (LoginResponse);
-  // Logout user from all services.
-  rpc Logout(LogoutRequest) returns (LogoutResponse);
-  // Checks if tokens are valid and generates new ones.
-  rpc Check(CheckRequest) returns (CheckResponse);
+  rpc Login(LoginReq) returns (LoginRes);
+  // Logout user from all accounts.
+  rpc LogoutAll(LogoutAllReq) returns (LogoutAllRes);
+  // Checks if Access token is Valid.
+  rpc Check(CheckReq) returns (CheckRes);
+  // Updates Token pair if refresh token is valid.
+  rpc Refresh(RefreshReq) returns (RefreshRes);
 }
-message RegisterRequest {
+
+message TokenPair {
+  string access_token = 1;  // Access token of the logged in user.
+  string refresh_token = 2; // Refresh token of the logged in user.
+}
+
+message RegisterReq {
   string email = 1;    // Email of the user to register.
   string password = 2; // Password of the user to register.
 }
 
-message RegisterResponse {
-  user_v1.User user = 1; // User ID of the registered user.
+message RegisterRes {
+  user_v1.User user = 1;
+  TokenPair tokenPair = 2;
 }
 
-message LoginRequest {
+message LoginReq {
   string email = 1;    // Email of the user to login.
   string password = 2; // Password of the user to login.
   int32 app_id = 3;    // ID of the app to login to.
 }
 
-message LoginResponse {
-  string auth_token = 1;    // Auth token of the logged in user.
-  string refresh_token = 2; // Refresh token of the logged in user.
+message LoginRes { TokenPair tokenPair = 1; }
+
+message LogoutAllReq { string access_token = 1; }
+
+message LogoutAllRes {
+  bool success = 1; // true if response success
 }
 
-message LogoutRequest {
-  string refresh_token = 1; // Refresh token of the user to logout.
+message CheckReq {
+  string access_token = 1; // Auth token of the logged in user.
 }
 
-message LogoutResponse {
-  bool success = 1; // Indicates whether the logout was successful.
+message CheckRes {
+  bool success = 1; // true if response success
 }
 
-message CheckRequest {
-  string auth_token = 1;    // Auth token of the logged in user.
-  string refresh_token = 2; // Refresh token of the logged in user.
+message RefreshReq {
+  string refresh_token = 1; // Refresh token of the logged in user.
 }
-
-message CheckResponse {
-  string auth_token = 1;    // Auth token of the logged in user.
-  string refresh_token = 2; // Refresh token of the logged in user.
-}
+message RefreshRes { TokenPair tokenPair = 1; }

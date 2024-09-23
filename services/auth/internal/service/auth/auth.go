@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -38,6 +37,7 @@ type TokenPair struct {
 	RefreshToken string
 }
 
+// Входа пользователя в систему
 func (s *Service) Login(ctx context.Context, data *model.Login) (*TokenPair, error) {
 
 	usr, err := s.UserRepository.CheckPassword(ctx, data.Email, data.Password)
@@ -46,17 +46,49 @@ func (s *Service) Login(ctx context.Context, data *model.Login) (*TokenPair, err
 		return nil, err
 	}
 
-	token, err := s.generateAccessToken(usr.GetId(), usr.GetEmail())
+	return s.GenerateTokenPair(ctx, usr.GetId(), usr.GetEmail())
+}
+
+// Метод регистрации пользователя
+func (s *Service) Register(ctx context.Context, data *model.Register) (*user_v1.User, error) {
+
+	usr, err := s.UserRepository.Create(ctx, data.Email, data.Password)
+	if err != nil {
+		return nil, fmt.Errorf("error: Unable to create user. %s", err)
+	}
+
+	return usr, nil
+}
+
+// Метод Выхода из всех устройств пользователя
+func (s *Service) LogoutAll(ctx context.Context, userId string) error {
+
+	_, err := s.AuthRepository.GenerateJWTUserKey(ctx, userId)
+
+	return err
+}
+
+// Метод генерации Access и Refresh
+func (s *Service) GenerateTokenPair(ctx context.Context, userId string, email string) (*TokenPair, error) {
+	usr, err := s.UserRepository.Get(ctx, userId, email)
+
 	if err != nil {
 		return nil, err
 	}
 
-	refreshToken, err := s.generateRefreshToken(usr.GetId())
+	// todo добавить генерацию JWTUserKey если такового не существует для такого пользователя
+	jwtExtraKey, err := s.mustGetJWTExtraKey(ctx, usr.Id)
+
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.AuthRepository.SaveToken(ctx, refreshToken, usr.GetId())
+	token, err := s.generateAccessToken(usr)
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken, err := s.generateRefreshToken(usr.GetId(), jwtExtraKey)
 	if err != nil {
 		return nil, err
 	}
@@ -67,82 +99,55 @@ func (s *Service) Login(ctx context.Context, data *model.Login) (*TokenPair, err
 	}, nil
 }
 
-func (s *Service) Register(ctx context.Context, data *model.Register) (*user_v1.User, error) {
+// Метод проверки Access токена
+func (s *Service) CheckAccessToken(ctx context.Context, accessToken string) (*AccessTokenClaims, error) {
+	_, err := s.validateToken(accessToken, "")
 
-	usr, err := s.UserRepository.Create(ctx, data.Email, data.Password)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error: Unable to create user. %s", err))
+		return nil, err
 	}
 
-	return usr, nil
+	claims, err := getTokenPayload[AccessTokenClaims](accessToken)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return claims, nil
 }
 
-func (s *Service) Logout(context.Context, string) (bool, error) {
-	// удалять refresh токен из БД
-	return false, nil
+// Метод проверки Refresh токена.
+func (s *Service) CheckRefreshToken(ctx context.Context, refreshToken string) (*RefreshTokenClaims, error) {
+	// забираем пэйлоад у токена для получения информации о пользователе
+	claims, err := getTokenPayload[RefreshTokenClaims](refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	JWTUserKey, err := s.mustGetJWTExtraKey(ctx, claims.Subject)
+
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.validateToken(refreshToken, JWTUserKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return claims, nil
 }
 
-func (s *Service) CheckTokens(ctx context.Context, tokenPair *model.Check) (*model.Check, error) {
-	var userId string
-
-	if tokenPair.AccessToken != "" {
-		// забираем пэйлоад у токена для получения информации о пользователе
-		claims, err := getTokenPayload[AccessTokenClaims](tokenPair.AccessToken)
-		if err != nil {
-			return nil, err
-		}
-		userId = claims.Subject
-	} else if tokenPair.RefreshToken != "" {
-		claims, err := getTokenPayload[RefreshTokenClaims](tokenPair.RefreshToken)
-		if err != nil {
-			return nil, err
-		}
-		userId = claims.Subject
-	} else {
-		return nil, fmt.Errorf("no token provided")
-	}
-
-	// Забираем пользовательские данные из другого сервиса
-	usr, err := s.UserRepository.Get(ctx, userId, "")
-	if err != nil {
-		return nil, fmt.Errorf("unable to find user. %s", err)
-	}
-
-	// Проверяем access токен и если тот не валиден, то refresh
-	_, err = s.validateToken(tokenPair.AccessToken)
-	if err != nil {
-		_, err = s.validateToken(tokenPair.RefreshToken)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// Генерируем новые токены
-
-	newAccessToken, err := s.generateAccessToken(usr.GetId(), usr.GetEmail())
-	if err != nil {
-		return nil, fmt.Errorf("unable to create access token: %s", err)
-	}
-	newRefreshToken, err := s.generateRefreshToken(usr.GetId())
-	if err != nil {
-		return nil, fmt.Errorf("unable to create refresh token: %s", err)
-	}
-
-	return &model.Check{
-		AccessToken:  newAccessToken,
-		RefreshToken: newRefreshToken,
-	}, nil
-
-}
-
-func (s *Service) generateAccessToken(id string, email string) (string, error) {
+// Метод генерации Access токена
+func (s *Service) generateAccessToken(usr *user_v1.User) (string, error) {
 	// Генерируем полезные данные, которые будут храниться в токене
 	payload := AccessTokenClaims{
 		StandardClaims: jwt.StandardClaims{
-			Subject:   id,
-			ExpiresAt: time.Now().Add(time.Hour * 3).Unix(),
+			Subject: usr.GetId(),
+			// 1 hour
+			ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
 		},
-		Email: email,
+		Email: usr.GetEmail(),
 	}
 
 	// Создаем новый JWT-токен и подписываем его по алгоритму HS256
@@ -151,21 +156,24 @@ func (s *Service) generateAccessToken(id string, email string) (string, error) {
 	return token.SignedString([]byte(s.JWTKey))
 }
 
-func (s *Service) generateRefreshToken(id string) (string, error) {
+// Метод генерации Refresh токена
+func (s *Service) generateRefreshToken(id string, extraKeyData string) (string, error) {
 	// Генерируем полезные данные, которые будут храниться в токене
 	payload := RefreshTokenClaims{
 		StandardClaims: jwt.StandardClaims{
-			Subject:   id,
-			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+			Subject: id,
+			// 21 day
+			ExpiresAt: time.Now().Add(time.Hour * 504).Unix(),
 		},
 	}
 
 	// Создаем новый JWT-токен и подписываем его по алгоритму HS256
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
-	return token.SignedString([]byte(s.JWTKey))
+	return token.SignedString([]byte(s.JWTKey + extraKeyData))
 }
 
+// Метод получения пэйлоада из токена
 func getTokenPayload[T interface{}](token string) (*T, error) {
 	// Разделение токена на части
 	parts := strings.Split(token, ".")
@@ -188,8 +196,10 @@ func getTokenPayload[T interface{}](token string) (*T, error) {
 	return &claims, nil
 }
 
+// Метод проверки токена
 func (s *Service) validateToken(
 	token string,
+	extraJWTKey string,
 ) (*jwt.Token, error) {
 	validToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем, что алгоритм подписи тот, что мы ожидаем
@@ -198,7 +208,7 @@ func (s *Service) validateToken(
 		}
 
 		// отдаем ключ подписи
-		return []byte(s.JWTKey), nil
+		return []byte(s.JWTKey + extraJWTKey), nil
 	})
 
 	if err != nil || !validToken.Valid {
@@ -206,4 +216,16 @@ func (s *Service) validateToken(
 	}
 
 	return validToken, nil
+}
+
+// Метод получения дополнительного ключа для JWT токена. Если ключа не существует он будет сгенерирован
+func (s *Service) mustGetJWTExtraKey(ctx context.Context, userID string) (string, error) {
+	jwtUserKey, err := s.AuthRepository.GetJWTUserKey(ctx, userID)
+
+	if err == nil {
+		return jwtUserKey, nil
+	}
+	// todo добавить проверку конкретной ошибки, что за текущим пользователем действительно нет JWTKey
+
+	return s.AuthRepository.GenerateJWTUserKey(ctx, userID)
 }

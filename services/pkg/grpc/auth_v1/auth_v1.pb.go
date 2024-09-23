@@ -21,17 +21,17 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type RegisterRequest struct {
+type TokenPair struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`       // Email of the user to register.
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"` // Password of the user to register.
+	AccessToken  string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`    // Access token of the logged in user.
+	RefreshToken string `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // Refresh token of the logged in user.
 }
 
-func (x *RegisterRequest) Reset() {
-	*x = RegisterRequest{}
+func (x *TokenPair) Reset() {
+	*x = TokenPair{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_auth_v1_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -39,13 +39,13 @@ func (x *RegisterRequest) Reset() {
 	}
 }
 
-func (x *RegisterRequest) String() string {
+func (x *TokenPair) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RegisterRequest) ProtoMessage() {}
+func (*TokenPair) ProtoMessage() {}
 
-func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
+func (x *TokenPair) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_v1_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -57,35 +57,36 @@ func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
-func (*RegisterRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use TokenPair.ProtoReflect.Descriptor instead.
+func (*TokenPair) Descriptor() ([]byte, []int) {
 	return file_auth_v1_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *RegisterRequest) GetEmail() string {
+func (x *TokenPair) GetAccessToken() string {
 	if x != nil {
-		return x.Email
+		return x.AccessToken
 	}
 	return ""
 }
 
-func (x *RegisterRequest) GetPassword() string {
+func (x *TokenPair) GetRefreshToken() string {
 	if x != nil {
-		return x.Password
+		return x.RefreshToken
 	}
 	return ""
 }
 
-type RegisterResponse struct {
+type RegisterReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	User *user_v1.User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"` // User ID of the registered user.
+	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`       // Email of the user to register.
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"` // Password of the user to register.
 }
 
-func (x *RegisterResponse) Reset() {
-	*x = RegisterResponse{}
+func (x *RegisterReq) Reset() {
+	*x = RegisterReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_auth_v1_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -93,13 +94,13 @@ func (x *RegisterResponse) Reset() {
 	}
 }
 
-func (x *RegisterResponse) String() string {
+func (x *RegisterReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RegisterResponse) ProtoMessage() {}
+func (*RegisterReq) ProtoMessage() {}
 
-func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
+func (x *RegisterReq) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_v1_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -111,30 +112,36 @@ func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
-func (*RegisterResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use RegisterReq.ProtoReflect.Descriptor instead.
+func (*RegisterReq) Descriptor() ([]byte, []int) {
 	return file_auth_v1_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *RegisterResponse) GetUser() *user_v1.User {
+func (x *RegisterReq) GetEmail() string {
 	if x != nil {
-		return x.User
+		return x.Email
 	}
-	return nil
+	return ""
 }
 
-type LoginRequest struct {
+func (x *RegisterReq) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type RegisterRes struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`               // Email of the user to login.
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`         // Password of the user to login.
-	AppId    int32  `protobuf:"varint,3,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"` // ID of the app to login to.
+	User      *user_v1.User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	TokenPair *TokenPair    `protobuf:"bytes,2,opt,name=tokenPair,proto3" json:"tokenPair,omitempty"`
 }
 
-func (x *LoginRequest) Reset() {
-	*x = LoginRequest{}
+func (x *RegisterRes) Reset() {
+	*x = RegisterRes{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_auth_v1_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -142,13 +149,13 @@ func (x *LoginRequest) Reset() {
 	}
 }
 
-func (x *LoginRequest) String() string {
+func (x *RegisterRes) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoginRequest) ProtoMessage() {}
+func (*RegisterRes) ProtoMessage() {}
 
-func (x *LoginRequest) ProtoReflect() protoreflect.Message {
+func (x *RegisterRes) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_v1_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -160,43 +167,37 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
-func (*LoginRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RegisterRes.ProtoReflect.Descriptor instead.
+func (*RegisterRes) Descriptor() ([]byte, []int) {
 	return file_auth_v1_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *LoginRequest) GetEmail() string {
+func (x *RegisterRes) GetUser() *user_v1.User {
 	if x != nil {
-		return x.Email
+		return x.User
 	}
-	return ""
+	return nil
 }
 
-func (x *LoginRequest) GetPassword() string {
+func (x *RegisterRes) GetTokenPair() *TokenPair {
 	if x != nil {
-		return x.Password
+		return x.TokenPair
 	}
-	return ""
+	return nil
 }
 
-func (x *LoginRequest) GetAppId() int32 {
-	if x != nil {
-		return x.AppId
-	}
-	return 0
-}
-
-type LoginResponse struct {
+type LoginReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AuthToken    string `protobuf:"bytes,1,opt,name=auth_token,json=authToken,proto3" json:"auth_token,omitempty"`          // Auth token of the logged in user.
-	RefreshToken string `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // Refresh token of the logged in user.
+	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`               // Email of the user to login.
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`         // Password of the user to login.
+	AppId    int32  `protobuf:"varint,3,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"` // ID of the app to login to.
 }
 
-func (x *LoginResponse) Reset() {
-	*x = LoginResponse{}
+func (x *LoginReq) Reset() {
+	*x = LoginReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_auth_v1_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -204,13 +205,13 @@ func (x *LoginResponse) Reset() {
 	}
 }
 
-func (x *LoginResponse) String() string {
+func (x *LoginReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoginResponse) ProtoMessage() {}
+func (*LoginReq) ProtoMessage() {}
 
-func (x *LoginResponse) ProtoReflect() protoreflect.Message {
+func (x *LoginReq) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_v1_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -222,35 +223,42 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
-func (*LoginResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoginReq.ProtoReflect.Descriptor instead.
+func (*LoginReq) Descriptor() ([]byte, []int) {
 	return file_auth_v1_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *LoginResponse) GetAuthToken() string {
+func (x *LoginReq) GetEmail() string {
 	if x != nil {
-		return x.AuthToken
+		return x.Email
 	}
 	return ""
 }
 
-func (x *LoginResponse) GetRefreshToken() string {
+func (x *LoginReq) GetPassword() string {
 	if x != nil {
-		return x.RefreshToken
+		return x.Password
 	}
 	return ""
 }
 
-type LogoutRequest struct {
+func (x *LoginReq) GetAppId() int32 {
+	if x != nil {
+		return x.AppId
+	}
+	return 0
+}
+
+type LoginRes struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RefreshToken string `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // Refresh token of the user to logout.
+	TokenPair *TokenPair `protobuf:"bytes,1,opt,name=tokenPair,proto3" json:"tokenPair,omitempty"`
 }
 
-func (x *LogoutRequest) Reset() {
-	*x = LogoutRequest{}
+func (x *LoginRes) Reset() {
+	*x = LoginRes{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_auth_v1_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -258,13 +266,13 @@ func (x *LogoutRequest) Reset() {
 	}
 }
 
-func (x *LogoutRequest) String() string {
+func (x *LoginRes) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LogoutRequest) ProtoMessage() {}
+func (*LoginRes) ProtoMessage() {}
 
-func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
+func (x *LoginRes) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_v1_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -276,28 +284,28 @@ func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LogoutRequest.ProtoReflect.Descriptor instead.
-func (*LogoutRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoginRes.ProtoReflect.Descriptor instead.
+func (*LoginRes) Descriptor() ([]byte, []int) {
 	return file_auth_v1_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *LogoutRequest) GetRefreshToken() string {
+func (x *LoginRes) GetTokenPair() *TokenPair {
 	if x != nil {
-		return x.RefreshToken
+		return x.TokenPair
 	}
-	return ""
+	return nil
 }
 
-type LogoutResponse struct {
+type LogoutAllReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // Indicates whether the logout was successful.
+	AccessToken string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 }
 
-func (x *LogoutResponse) Reset() {
-	*x = LogoutResponse{}
+func (x *LogoutAllReq) Reset() {
+	*x = LogoutAllReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_auth_v1_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -305,13 +313,13 @@ func (x *LogoutResponse) Reset() {
 	}
 }
 
-func (x *LogoutResponse) String() string {
+func (x *LogoutAllReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LogoutResponse) ProtoMessage() {}
+func (*LogoutAllReq) ProtoMessage() {}
 
-func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
+func (x *LogoutAllReq) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_v1_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -323,29 +331,28 @@ func (x *LogoutResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LogoutResponse.ProtoReflect.Descriptor instead.
-func (*LogoutResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use LogoutAllReq.ProtoReflect.Descriptor instead.
+func (*LogoutAllReq) Descriptor() ([]byte, []int) {
 	return file_auth_v1_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *LogoutResponse) GetSuccess() bool {
+func (x *LogoutAllReq) GetAccessToken() string {
 	if x != nil {
-		return x.Success
+		return x.AccessToken
 	}
-	return false
+	return ""
 }
 
-type CheckRequest struct {
+type LogoutAllRes struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AuthToken    string `protobuf:"bytes,1,opt,name=auth_token,json=authToken,proto3" json:"auth_token,omitempty"`          // Auth token of the logged in user.
-	RefreshToken string `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // Refresh token of the logged in user.
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // true if response success
 }
 
-func (x *CheckRequest) Reset() {
-	*x = CheckRequest{}
+func (x *LogoutAllRes) Reset() {
+	*x = LogoutAllRes{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_auth_v1_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -353,13 +360,13 @@ func (x *CheckRequest) Reset() {
 	}
 }
 
-func (x *CheckRequest) String() string {
+func (x *LogoutAllRes) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CheckRequest) ProtoMessage() {}
+func (*LogoutAllRes) ProtoMessage() {}
 
-func (x *CheckRequest) ProtoReflect() protoreflect.Message {
+func (x *LogoutAllRes) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_v1_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -371,36 +378,28 @@ func (x *CheckRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CheckRequest.ProtoReflect.Descriptor instead.
-func (*CheckRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use LogoutAllRes.ProtoReflect.Descriptor instead.
+func (*LogoutAllRes) Descriptor() ([]byte, []int) {
 	return file_auth_v1_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *CheckRequest) GetAuthToken() string {
+func (x *LogoutAllRes) GetSuccess() bool {
 	if x != nil {
-		return x.AuthToken
+		return x.Success
 	}
-	return ""
+	return false
 }
 
-func (x *CheckRequest) GetRefreshToken() string {
-	if x != nil {
-		return x.RefreshToken
-	}
-	return ""
-}
-
-type CheckResponse struct {
+type CheckReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AuthToken    string `protobuf:"bytes,1,opt,name=auth_token,json=authToken,proto3" json:"auth_token,omitempty"`          // Auth token of the logged in user.
-	RefreshToken string `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // Refresh token of the logged in user.
+	AccessToken string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"` // Auth token of the logged in user.
 }
 
-func (x *CheckResponse) Reset() {
-	*x = CheckResponse{}
+func (x *CheckReq) Reset() {
+	*x = CheckReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_auth_v1_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -408,13 +407,13 @@ func (x *CheckResponse) Reset() {
 	}
 }
 
-func (x *CheckResponse) String() string {
+func (x *CheckReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CheckResponse) ProtoMessage() {}
+func (*CheckReq) ProtoMessage() {}
 
-func (x *CheckResponse) ProtoReflect() protoreflect.Message {
+func (x *CheckReq) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_v1_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -426,23 +425,157 @@ func (x *CheckResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CheckResponse.ProtoReflect.Descriptor instead.
-func (*CheckResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CheckReq.ProtoReflect.Descriptor instead.
+func (*CheckReq) Descriptor() ([]byte, []int) {
 	return file_auth_v1_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *CheckResponse) GetAuthToken() string {
+func (x *CheckReq) GetAccessToken() string {
 	if x != nil {
-		return x.AuthToken
+		return x.AccessToken
 	}
 	return ""
 }
 
-func (x *CheckResponse) GetRefreshToken() string {
+type CheckRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"` // true if response success
+}
+
+func (x *CheckRes) Reset() {
+	*x = CheckRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_v1_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CheckRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckRes) ProtoMessage() {}
+
+func (x *CheckRes) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckRes.ProtoReflect.Descriptor instead.
+func (*CheckRes) Descriptor() ([]byte, []int) {
+	return file_auth_v1_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CheckRes) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type RefreshReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RefreshToken string `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"` // Refresh token of the logged in user.
+}
+
+func (x *RefreshReq) Reset() {
+	*x = RefreshReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_v1_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RefreshReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RefreshReq) ProtoMessage() {}
+
+func (x *RefreshReq) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RefreshReq.ProtoReflect.Descriptor instead.
+func (*RefreshReq) Descriptor() ([]byte, []int) {
+	return file_auth_v1_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *RefreshReq) GetRefreshToken() string {
 	if x != nil {
 		return x.RefreshToken
 	}
 	return ""
+}
+
+type RefreshRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TokenPair *TokenPair `protobuf:"bytes,1,opt,name=tokenPair,proto3" json:"tokenPair,omitempty"`
+}
+
+func (x *RefreshRes) Reset() {
+	*x = RefreshRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_v1_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RefreshRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RefreshRes) ProtoMessage() {}
+
+func (x *RefreshRes) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RefreshRes.ProtoReflect.Descriptor instead.
+func (*RefreshRes) Descriptor() ([]byte, []int) {
+	return file_auth_v1_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *RefreshRes) GetTokenPair() *TokenPair {
+	if x != nil {
+		return x.TokenPair
+	}
+	return nil
 }
 
 var File_auth_v1_proto protoreflect.FileDescriptor
@@ -450,62 +583,72 @@ var File_auth_v1_proto protoreflect.FileDescriptor
 var file_auth_v1_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
 	0x07, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x1a, 0x12, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x75,
-	0x73, 0x65, 0x72, 0x5f, 0x76, 0x31, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x43, 0x0a, 0x0f,
-	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
-	0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
-	0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72,
-	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72,
-	0x64, 0x22, 0x35, 0x0a, 0x10, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x76, 0x31, 0x2e, 0x55, 0x73,
-	0x65, 0x72, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x22, 0x57, 0x0a, 0x0c, 0x4c, 0x6f, 0x67, 0x69,
-	0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69,
-	0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a,
-	0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x61, 0x70,
-	0x70, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x61, 0x70, 0x70, 0x49,
-	0x64, 0x22, 0x53, 0x0a, 0x0d, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x54, 0x6f, 0x6b, 0x65,
-	0x6e, 0x12, 0x23, 0x0a, 0x0d, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x5f, 0x74, 0x6f, 0x6b,
-	0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73,
-	0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x34, 0x0a, 0x0d, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x23, 0x0a, 0x0d, 0x72, 0x65, 0x66, 0x72, 0x65,
-	0x73, 0x68, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c,
-	0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x2a, 0x0a, 0x0e,
-	0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18,
-	0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x52, 0x0a, 0x0c, 0x43, 0x68, 0x65, 0x63,
-	0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x61, 0x75, 0x74, 0x68,
-	0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x61, 0x75,
-	0x74, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x23, 0x0a, 0x0d, 0x72, 0x65, 0x66, 0x72, 0x65,
-	0x73, 0x68, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c,
-	0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x53, 0x0a, 0x0d,
-	0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1d, 0x0a,
-	0x0a, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x23, 0x0a, 0x0d,
+	0x73, 0x65, 0x72, 0x5f, 0x76, 0x31, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x53, 0x0a, 0x09,
+	0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x50, 0x61, 0x69, 0x72, 0x12, 0x21, 0x0a, 0x0c, 0x61, 0x63, 0x63,
+	0x65, 0x73, 0x73, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0b, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x23, 0x0a, 0x0d,
 	0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x0c, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x54, 0x6f, 0x6b, 0x65,
-	0x6e, 0x32, 0xf4, 0x01, 0x0a, 0x06, 0x41, 0x75, 0x74, 0x68, 0x56, 0x31, 0x12, 0x3f, 0x0a, 0x08,
-	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x18, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f,
-	0x76, 0x31, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x19, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x67,
-	0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x36, 0x0a,
-	0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x15, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31,
-	0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
+	0x6e, 0x22, 0x3f, 0x0a, 0x0b, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71,
+	0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f,
+	0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f,
+	0x72, 0x64, 0x22, 0x62, 0x0a, 0x0b, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65,
+	0x73, 0x12, 0x21, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0d, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x76, 0x31, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04,
+	0x75, 0x73, 0x65, 0x72, 0x12, 0x30, 0x0a, 0x09, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x50, 0x61, 0x69,
+	0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76,
+	0x31, 0x2e, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x50, 0x61, 0x69, 0x72, 0x52, 0x09, 0x74, 0x6f, 0x6b,
+	0x65, 0x6e, 0x50, 0x61, 0x69, 0x72, 0x22, 0x53, 0x0a, 0x08, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52,
+	0x65, 0x71, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73,
+	0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73,
+	0x77, 0x6f, 0x72, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x61, 0x70, 0x70, 0x5f, 0x69, 0x64, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x61, 0x70, 0x70, 0x49, 0x64, 0x22, 0x3c, 0x0a, 0x08, 0x4c,
+	0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x30, 0x0a, 0x09, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
+	0x50, 0x61, 0x69, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x61, 0x75, 0x74,
+	0x68, 0x5f, 0x76, 0x31, 0x2e, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x50, 0x61, 0x69, 0x72, 0x52, 0x09,
+	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x50, 0x61, 0x69, 0x72, 0x22, 0x31, 0x0a, 0x0c, 0x4c, 0x6f, 0x67,
+	0x6f, 0x75, 0x74, 0x41, 0x6c, 0x6c, 0x52, 0x65, 0x71, 0x12, 0x21, 0x0a, 0x0c, 0x61, 0x63, 0x63,
+	0x65, 0x73, 0x73, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0b, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x28, 0x0a, 0x0c,
+	0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x41, 0x6c, 0x6c, 0x52, 0x65, 0x73, 0x12, 0x18, 0x0a, 0x07,
+	0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x73,
+	0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x2d, 0x0a, 0x08, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52,
+	0x65, 0x71, 0x12, 0x21, 0x0a, 0x0c, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x5f, 0x74, 0x6f, 0x6b,
+	0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73,
+	0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x24, 0x0a, 0x08, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65,
+	0x73, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x31, 0x0a, 0x0a, 0x52,
+	0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x52, 0x65, 0x71, 0x12, 0x23, 0x0a, 0x0d, 0x72, 0x65, 0x66,
+	0x72, 0x65, 0x73, 0x68, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0c, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x3e,
+	0x0a, 0x0a, 0x52, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x52, 0x65, 0x73, 0x12, 0x30, 0x0a, 0x09,
+	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x50, 0x61, 0x69, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x12, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x50,
+	0x61, 0x69, 0x72, 0x52, 0x09, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x50, 0x61, 0x69, 0x72, 0x32, 0x8e,
+	0x02, 0x0a, 0x06, 0x41, 0x75, 0x74, 0x68, 0x56, 0x31, 0x12, 0x36, 0x0a, 0x08, 0x52, 0x65, 0x67,
+	0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x14, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e,
+	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x61, 0x75,
+	0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65,
+	0x73, 0x12, 0x2d, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x11, 0x2e, 0x61, 0x75, 0x74,
+	0x68, 0x5f, 0x76, 0x31, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x11, 0x2e,
 	0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39, 0x0a, 0x06, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x12,
-	0x16, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76,
-	0x31, 0x2e, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x36, 0x0a, 0x05, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x12, 0x15, 0x2e, 0x61, 0x75, 0x74, 0x68,
-	0x5f, 0x76, 0x31, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x16, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x39, 0x5a, 0x37, 0x67, 0x69, 0x74, 0x68,
-	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x49, 0x6e, 0x73, 0x69, 0x64, 0x31, 0x2f, 0x67, 0x6f,
-	0x2d, 0x61, 0x75, 0x74, 0x68, 0x2d, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x67,
-	0x72, 0x70, 0x63, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x3b, 0x61, 0x75, 0x74, 0x68,
-	0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x12, 0x39, 0x0a, 0x09, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x41, 0x6c, 0x6c, 0x12, 0x15, 0x2e,
+	0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x4c, 0x6f, 0x67, 0x6f, 0x75, 0x74, 0x41, 0x6c,
+	0x6c, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x4c,
+	0x6f, 0x67, 0x6f, 0x75, 0x74, 0x41, 0x6c, 0x6c, 0x52, 0x65, 0x73, 0x12, 0x2d, 0x0a, 0x05, 0x43,
+	0x68, 0x65, 0x63, 0x6b, 0x12, 0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e, 0x43,
+	0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76,
+	0x31, 0x2e, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x12, 0x33, 0x0a, 0x07, 0x52, 0x65,
+	0x66, 0x72, 0x65, 0x73, 0x68, 0x12, 0x13, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x2e,
+	0x52, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x61, 0x75, 0x74,
+	0x68, 0x5f, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x52, 0x65, 0x73, 0x42,
+	0x39, 0x5a, 0x37, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x49, 0x6e,
+	0x73, 0x69, 0x64, 0x31, 0x2f, 0x67, 0x6f, 0x2d, 0x61, 0x75, 0x74, 0x68, 0x2d, 0x75, 0x73, 0x65,
+	0x72, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x5f,
+	0x76, 0x31, 0x3b, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -520,33 +663,41 @@ func file_auth_v1_proto_rawDescGZIP() []byte {
 	return file_auth_v1_proto_rawDescData
 }
 
-var file_auth_v1_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_auth_v1_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_auth_v1_proto_goTypes = []interface{}{
-	(*RegisterRequest)(nil),  // 0: auth_v1.RegisterRequest
-	(*RegisterResponse)(nil), // 1: auth_v1.RegisterResponse
-	(*LoginRequest)(nil),     // 2: auth_v1.LoginRequest
-	(*LoginResponse)(nil),    // 3: auth_v1.LoginResponse
-	(*LogoutRequest)(nil),    // 4: auth_v1.LogoutRequest
-	(*LogoutResponse)(nil),   // 5: auth_v1.LogoutResponse
-	(*CheckRequest)(nil),     // 6: auth_v1.CheckRequest
-	(*CheckResponse)(nil),    // 7: auth_v1.CheckResponse
-	(*user_v1.User)(nil),     // 8: user_v1.User
+	(*TokenPair)(nil),    // 0: auth_v1.TokenPair
+	(*RegisterReq)(nil),  // 1: auth_v1.RegisterReq
+	(*RegisterRes)(nil),  // 2: auth_v1.RegisterRes
+	(*LoginReq)(nil),     // 3: auth_v1.LoginReq
+	(*LoginRes)(nil),     // 4: auth_v1.LoginRes
+	(*LogoutAllReq)(nil), // 5: auth_v1.LogoutAllReq
+	(*LogoutAllRes)(nil), // 6: auth_v1.LogoutAllRes
+	(*CheckReq)(nil),     // 7: auth_v1.CheckReq
+	(*CheckRes)(nil),     // 8: auth_v1.CheckRes
+	(*RefreshReq)(nil),   // 9: auth_v1.RefreshReq
+	(*RefreshRes)(nil),   // 10: auth_v1.RefreshRes
+	(*user_v1.User)(nil), // 11: user_v1.User
 }
 var file_auth_v1_proto_depIdxs = []int32{
-	8, // 0: auth_v1.RegisterResponse.user:type_name -> user_v1.User
-	0, // 1: auth_v1.AuthV1.Register:input_type -> auth_v1.RegisterRequest
-	2, // 2: auth_v1.AuthV1.Login:input_type -> auth_v1.LoginRequest
-	4, // 3: auth_v1.AuthV1.Logout:input_type -> auth_v1.LogoutRequest
-	6, // 4: auth_v1.AuthV1.Check:input_type -> auth_v1.CheckRequest
-	1, // 5: auth_v1.AuthV1.Register:output_type -> auth_v1.RegisterResponse
-	3, // 6: auth_v1.AuthV1.Login:output_type -> auth_v1.LoginResponse
-	5, // 7: auth_v1.AuthV1.Logout:output_type -> auth_v1.LogoutResponse
-	7, // 8: auth_v1.AuthV1.Check:output_type -> auth_v1.CheckResponse
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	11, // 0: auth_v1.RegisterRes.user:type_name -> user_v1.User
+	0,  // 1: auth_v1.RegisterRes.tokenPair:type_name -> auth_v1.TokenPair
+	0,  // 2: auth_v1.LoginRes.tokenPair:type_name -> auth_v1.TokenPair
+	0,  // 3: auth_v1.RefreshRes.tokenPair:type_name -> auth_v1.TokenPair
+	1,  // 4: auth_v1.AuthV1.Register:input_type -> auth_v1.RegisterReq
+	3,  // 5: auth_v1.AuthV1.Login:input_type -> auth_v1.LoginReq
+	5,  // 6: auth_v1.AuthV1.LogoutAll:input_type -> auth_v1.LogoutAllReq
+	7,  // 7: auth_v1.AuthV1.Check:input_type -> auth_v1.CheckReq
+	9,  // 8: auth_v1.AuthV1.Refresh:input_type -> auth_v1.RefreshReq
+	2,  // 9: auth_v1.AuthV1.Register:output_type -> auth_v1.RegisterRes
+	4,  // 10: auth_v1.AuthV1.Login:output_type -> auth_v1.LoginRes
+	6,  // 11: auth_v1.AuthV1.LogoutAll:output_type -> auth_v1.LogoutAllRes
+	8,  // 12: auth_v1.AuthV1.Check:output_type -> auth_v1.CheckRes
+	10, // 13: auth_v1.AuthV1.Refresh:output_type -> auth_v1.RefreshRes
+	9,  // [9:14] is the sub-list for method output_type
+	4,  // [4:9] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_auth_v1_proto_init() }
@@ -556,7 +707,7 @@ func file_auth_v1_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_auth_v1_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterRequest); i {
+			switch v := v.(*TokenPair); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -568,7 +719,7 @@ func file_auth_v1_proto_init() {
 			}
 		}
 		file_auth_v1_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterResponse); i {
+			switch v := v.(*RegisterReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -580,7 +731,7 @@ func file_auth_v1_proto_init() {
 			}
 		}
 		file_auth_v1_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoginRequest); i {
+			switch v := v.(*RegisterRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -592,7 +743,7 @@ func file_auth_v1_proto_init() {
 			}
 		}
 		file_auth_v1_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoginResponse); i {
+			switch v := v.(*LoginReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -604,7 +755,7 @@ func file_auth_v1_proto_init() {
 			}
 		}
 		file_auth_v1_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LogoutRequest); i {
+			switch v := v.(*LoginRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -616,7 +767,7 @@ func file_auth_v1_proto_init() {
 			}
 		}
 		file_auth_v1_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LogoutResponse); i {
+			switch v := v.(*LogoutAllReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -628,7 +779,7 @@ func file_auth_v1_proto_init() {
 			}
 		}
 		file_auth_v1_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckRequest); i {
+			switch v := v.(*LogoutAllRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -640,7 +791,43 @@ func file_auth_v1_proto_init() {
 			}
 		}
 		file_auth_v1_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckResponse); i {
+			switch v := v.(*CheckReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_v1_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CheckRes); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_v1_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RefreshReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_v1_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RefreshRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -658,7 +845,7 @@ func file_auth_v1_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_auth_v1_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

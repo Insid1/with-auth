@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthV1_Register_FullMethodName = "/auth_v1.AuthV1/Register"
-	AuthV1_Login_FullMethodName    = "/auth_v1.AuthV1/Login"
-	AuthV1_Logout_FullMethodName   = "/auth_v1.AuthV1/Logout"
-	AuthV1_Check_FullMethodName    = "/auth_v1.AuthV1/Check"
+	AuthV1_Register_FullMethodName  = "/auth_v1.AuthV1/Register"
+	AuthV1_Login_FullMethodName     = "/auth_v1.AuthV1/Login"
+	AuthV1_LogoutAll_FullMethodName = "/auth_v1.AuthV1/LogoutAll"
+	AuthV1_Check_FullMethodName     = "/auth_v1.AuthV1/Check"
+	AuthV1_Refresh_FullMethodName   = "/auth_v1.AuthV1/Refresh"
 )
 
 // AuthV1Client is the client API for AuthV1 service.
@@ -30,13 +31,15 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthV1Client interface {
 	// Register registers a new user.
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
+	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error)
 	// Login logs in a user and returns an auth token.
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	// Logout user from all services.
-	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
-	// Checks if tokens are valid and generates new ones.
-	Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error)
+	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error)
+	// Logout user from all accounts.
+	LogoutAll(ctx context.Context, in *LogoutAllReq, opts ...grpc.CallOption) (*LogoutAllRes, error)
+	// Checks if Access token is Valid.
+	Check(ctx context.Context, in *CheckReq, opts ...grpc.CallOption) (*CheckRes, error)
+	// Updates Token pair if refresh token is valid.
+	Refresh(ctx context.Context, in *RefreshReq, opts ...grpc.CallOption) (*RefreshRes, error)
 }
 
 type authV1Client struct {
@@ -47,8 +50,8 @@ func NewAuthV1Client(cc grpc.ClientConnInterface) AuthV1Client {
 	return &authV1Client{cc}
 }
 
-func (c *authV1Client) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
-	out := new(RegisterResponse)
+func (c *authV1Client) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterRes, error) {
+	out := new(RegisterRes)
 	err := c.cc.Invoke(ctx, AuthV1_Register_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -56,8 +59,8 @@ func (c *authV1Client) Register(ctx context.Context, in *RegisterRequest, opts .
 	return out, nil
 }
 
-func (c *authV1Client) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
-	out := new(LoginResponse)
+func (c *authV1Client) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRes, error) {
+	out := new(LoginRes)
 	err := c.cc.Invoke(ctx, AuthV1_Login_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -65,18 +68,27 @@ func (c *authV1Client) Login(ctx context.Context, in *LoginRequest, opts ...grpc
 	return out, nil
 }
 
-func (c *authV1Client) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error) {
-	out := new(LogoutResponse)
-	err := c.cc.Invoke(ctx, AuthV1_Logout_FullMethodName, in, out, opts...)
+func (c *authV1Client) LogoutAll(ctx context.Context, in *LogoutAllReq, opts ...grpc.CallOption) (*LogoutAllRes, error) {
+	out := new(LogoutAllRes)
+	err := c.cc.Invoke(ctx, AuthV1_LogoutAll_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authV1Client) Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error) {
-	out := new(CheckResponse)
+func (c *authV1Client) Check(ctx context.Context, in *CheckReq, opts ...grpc.CallOption) (*CheckRes, error) {
+	out := new(CheckRes)
 	err := c.cc.Invoke(ctx, AuthV1_Check_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authV1Client) Refresh(ctx context.Context, in *RefreshReq, opts ...grpc.CallOption) (*RefreshRes, error) {
+	out := new(RefreshRes)
+	err := c.cc.Invoke(ctx, AuthV1_Refresh_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,13 +100,15 @@ func (c *authV1Client) Check(ctx context.Context, in *CheckRequest, opts ...grpc
 // for forward compatibility
 type AuthV1Server interface {
 	// Register registers a new user.
-	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
+	Register(context.Context, *RegisterReq) (*RegisterRes, error)
 	// Login logs in a user and returns an auth token.
-	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	// Logout user from all services.
-	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
-	// Checks if tokens are valid and generates new ones.
-	Check(context.Context, *CheckRequest) (*CheckResponse, error)
+	Login(context.Context, *LoginReq) (*LoginRes, error)
+	// Logout user from all accounts.
+	LogoutAll(context.Context, *LogoutAllReq) (*LogoutAllRes, error)
+	// Checks if Access token is Valid.
+	Check(context.Context, *CheckReq) (*CheckRes, error)
+	// Updates Token pair if refresh token is valid.
+	Refresh(context.Context, *RefreshReq) (*RefreshRes, error)
 	mustEmbedUnimplementedAuthV1Server()
 }
 
@@ -102,17 +116,20 @@ type AuthV1Server interface {
 type UnimplementedAuthV1Server struct {
 }
 
-func (UnimplementedAuthV1Server) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
+func (UnimplementedAuthV1Server) Register(context.Context, *RegisterReq) (*RegisterRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedAuthV1Server) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+func (UnimplementedAuthV1Server) Login(context.Context, *LoginReq) (*LoginRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthV1Server) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+func (UnimplementedAuthV1Server) LogoutAll(context.Context, *LogoutAllReq) (*LogoutAllRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogoutAll not implemented")
 }
-func (UnimplementedAuthV1Server) Check(context.Context, *CheckRequest) (*CheckResponse, error) {
+func (UnimplementedAuthV1Server) Check(context.Context, *CheckReq) (*CheckRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
+}
+func (UnimplementedAuthV1Server) Refresh(context.Context, *RefreshReq) (*RefreshRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Refresh not implemented")
 }
 func (UnimplementedAuthV1Server) mustEmbedUnimplementedAuthV1Server() {}
 
@@ -128,7 +145,7 @@ func RegisterAuthV1Server(s grpc.ServiceRegistrar, srv AuthV1Server) {
 }
 
 func _AuthV1_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterRequest)
+	in := new(RegisterReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -140,13 +157,13 @@ func _AuthV1_Register_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: AuthV1_Register_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthV1Server).Register(ctx, req.(*RegisterRequest))
+		return srv.(AuthV1Server).Register(ctx, req.(*RegisterReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AuthV1_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
+	in := new(LoginReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -158,31 +175,31 @@ func _AuthV1_Login_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: AuthV1_Login_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthV1Server).Login(ctx, req.(*LoginRequest))
+		return srv.(AuthV1Server).Login(ctx, req.(*LoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthV1_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LogoutRequest)
+func _AuthV1_LogoutAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutAllReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthV1Server).Logout(ctx, in)
+		return srv.(AuthV1Server).LogoutAll(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthV1_Logout_FullMethodName,
+		FullMethod: AuthV1_LogoutAll_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthV1Server).Logout(ctx, req.(*LogoutRequest))
+		return srv.(AuthV1Server).LogoutAll(ctx, req.(*LogoutAllReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AuthV1_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckRequest)
+	in := new(CheckReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -194,7 +211,25 @@ func _AuthV1_Check_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: AuthV1_Check_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthV1Server).Check(ctx, req.(*CheckRequest))
+		return srv.(AuthV1Server).Check(ctx, req.(*CheckReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthV1_Refresh_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthV1Server).Refresh(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthV1_Refresh_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthV1Server).Refresh(ctx, req.(*RefreshReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -215,12 +250,16 @@ var AuthV1_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthV1_Login_Handler,
 		},
 		{
-			MethodName: "Logout",
-			Handler:    _AuthV1_Logout_Handler,
+			MethodName: "LogoutAll",
+			Handler:    _AuthV1_LogoutAll_Handler,
 		},
 		{
 			MethodName: "Check",
 			Handler:    _AuthV1_Check_Handler,
+		},
+		{
+			MethodName: "Refresh",
+			Handler:    _AuthV1_Refresh_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -9,25 +9,25 @@ type Repository struct {
 	DB *sql.DB
 }
 
-func (r *Repository) SaveToken(ctx context.Context, token string, userID string) error {
-	_, err := r.DB.Exec("INSERT INTO token (token, user_id) VALUES ($1, $2)", token, userID)
+func (r *Repository) GetJWTUserKey(ctx context.Context, userID string) (string, error) {
+	var jwtKey string
+
+	err := r.DB.QueryRow("SELECT jwt_key FROM auth WHERE user_id = $1", userID).Scan(&jwtKey)
+
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return jwtKey, nil
 }
 
-func (r *Repository) IsTokenLinkedWithUser(ctx context.Context, token string, userID string) bool {
-	var tokenId string
+func (r *Repository) GenerateJWTUserKey(ctx context.Context, userID string) (string, error) {
+	var jwtKey string
+	err := r.DB.QueryRow("INSERT INTO auth (user_id) VALUES ($1) RETURNING jwt_key;", userID).Scan(&jwtKey)
 
-	err := r.DB.QueryRow("SELECT id FROM token WHERE token = $1 AND user_id = $2", token, userID).Scan(&tokenId)
+	if err != nil {
+		return "", err
+	}
 
-	return err == nil
-}
-
-func (r *Repository) RemoveToken(ctx context.Context, token string) bool {
-	_, err := r.DB.Exec("DELETE FROM token WHERE token = $1", token)
-
-	return err == nil
+	return jwtKey, nil
 }

@@ -17,9 +17,8 @@ type User interface {
 }
 
 type Auth interface {
-	SaveToken(ctx context.Context, token string, userID string) error
-	IsTokenLinkedWithUser(ctx context.Context, token string, userID string) bool
-	RemoveToken(ctx context.Context, token string) bool
+	GetJWTUserKey(ctx context.Context, userID string) (string, error)
+	GenerateJWTUserKey(ctx context.Context, userID string) (string, error)
 }
 
 func NewUserRepository(client *common.GRPCClient[user_v1.UserV1Client]) User {

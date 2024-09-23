@@ -50,9 +50,9 @@ func (r *Repository) CheckPassword(ctx context.Context, email string, password s
 		Password: password,
 	})
 
-	if resp.Success {
-		return resp.GetUser(), nil
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, err
+	return resp.GetUser(), nil
 }

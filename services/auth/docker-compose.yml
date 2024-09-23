@@ -8,7 +8,7 @@ services:
     volumes:
       - ./db/db_data:/var/lib/postgresql/data
     env_file:
-      - .env
+      - db/.env
     environment:
       POSTGRES_PORT: ${DB_PORT}
     ports:

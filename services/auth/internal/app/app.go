@@ -123,7 +123,7 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 }
 
 func (a *App) initProvider(ctx context.Context) error {
-	provider, err := newProvider(ctx, a.config, a.DB, a.grpcUserClient)
+	provider, err := newProvider(a.config, a.DB, a.grpcUserClient)
 	if err != nil {
 		return err
 	}
@@ -133,16 +133,17 @@ func (a *App) initProvider(ctx context.Context) error {
 }
 
 func (a *App) initGRPCServer(_ context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+	a.grpcServer = grpc.NewServer()
 
 	reflection.Register(a.grpcServer)
+
 	auth_v1.RegisterAuthV1Server(a.grpcServer, a.provider.AuthHandler())
 
 	return nil
 }
 
 func (a *App) initGRPCUserClient(ctx context.Context) error {
-	connection, err := grpc.NewClient(a.config.GetUserServiceAddress())
+	connection, err := grpc.NewClient(a.config.GetUserServiceAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
 	}

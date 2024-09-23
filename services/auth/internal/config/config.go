@@ -35,5 +35,5 @@ func MustLoad() *Config {
 }
 
 func (cfg *Config) GetUserServiceAddress() string {
-	return net.JoinHostPort(cfg.AppConfig.UserServiceHost, cfg.AppConfig.UserServiceHost)
+	return net.JoinHostPort(cfg.AppConfig.UserServiceHost, cfg.AppConfig.UserServicePort)
 }

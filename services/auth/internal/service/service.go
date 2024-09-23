@@ -10,10 +10,12 @@ import (
 )
 
 type Auth interface {
-	Login(ctx context.Context, lgn *model.Login) (*auth.TokenPair, error)
-	Register(ctx context.Context, rgst *model.Register) (*user_v1.User, error)
-	Logout(ctx context.Context, refreshToken string) (bool, error)
-	CheckTokens(ctx context.Context, tokens *model.Check) (*model.Check, error)
+	Login(ctx context.Context, data *model.Login) (*auth.TokenPair, error)
+	Register(ctx context.Context, data *model.Register) (*user_v1.User, error)
+	LogoutAll(ctx context.Context, userId string) error
+	GenerateTokenPair(ctx context.Context, userId string, email string) (*auth.TokenPair, error)
+	CheckAccessToken(ctx context.Context, accessToken string) (*auth.AccessTokenClaims, error)
+	CheckRefreshToken(ctx context.Context, refreshToken string) (*auth.RefreshTokenClaims, error)
 }
 
 func NewAuthService(JWTKey string, userRepo repository.User, authRepo repository.Auth) Auth {
