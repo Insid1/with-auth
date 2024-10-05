@@ -2,12 +2,16 @@ package config
 
 import (
 	"log"
+	"net"
 
 	commonConfig "github.com/Insid1/go-auth-user/pkg/config"
 )
 
 type Config struct {
 	commonConfig.Config
+
+	AuthServiceHost string `env:"AUTH_SERVICE_HOST"     env-default:"127.0.0.1"`
+	AuthServicePort string `env:"AUTH_SERVICE_PORT"     env-default:"5432"`
 }
 
 func MustLoad() *Config {
@@ -22,4 +26,8 @@ func MustLoad() *Config {
 	}
 
 	return &cfg
+}
+
+func (c *Config) GetAuthServiceAddress() string {
+	return net.JoinHostPort(c.AuthServiceHost, c.AuthServicePort)
 }

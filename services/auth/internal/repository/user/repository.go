@@ -3,13 +3,12 @@ package user
 import (
 	"context"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/common"
-
 	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	userPkg "github.com/Insid1/go-auth-user/user/pkg"
 )
 
 type Repository struct {
-	UserClient *common.GRPCClient[user_v1.UserV1Client]
+	UserClient *userPkg.GRPCInitializedUserClient
 }
 
 func (r *Repository) Get(

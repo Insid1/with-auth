@@ -3,18 +3,17 @@ package app
 import (
 	"database/sql"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/common"
 	"github.com/Insid1/go-auth-user/auth-service/internal/config"
 	"github.com/Insid1/go-auth-user/auth-service/internal/handler"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
 	"github.com/Insid1/go-auth-user/auth-service/internal/service"
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	userPkg "github.com/Insid1/go-auth-user/user/pkg"
 )
 
 type Provider struct {
 	config         *config.Config
 	db             *sql.DB
-	grpcUserClient *common.GRPCClient[user_v1.UserV1Client]
+	grpcUserClient *userPkg.GRPCInitializedUserClient
 
 	authHandler    handler.Auth
 	authService    service.Auth
@@ -26,7 +25,7 @@ type Provider struct {
 func newProvider(
 	config *config.Config,
 	db *sql.DB,
-	grpcUserClient *common.GRPCClient[user_v1.UserV1Client],
+	grpcUserClient *userPkg.GRPCInitializedUserClient,
 ) (*Provider, error) {
 	return &Provider{config: config, db: db, grpcUserClient: grpcUserClient}, nil
 }

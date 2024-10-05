@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/common"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository/auth"
 	"github.com/Insid1/go-auth-user/auth-service/internal/repository/user"
 	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	userPkg "github.com/Insid1/go-auth-user/user/pkg"
 )
 
 type User interface {
@@ -21,7 +21,7 @@ type Auth interface {
 	GenerateJWTUserKey(ctx context.Context, userID string) (string, error)
 }
 
-func NewUserRepository(client *common.GRPCClient[user_v1.UserV1Client]) User {
+func NewUserRepository(client *userPkg.GRPCInitializedUserClient) User {
 	return &user.Repository{
 		UserClient: client,
 	}

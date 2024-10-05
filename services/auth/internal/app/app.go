@@ -7,16 +7,17 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/common"
 	"github.com/Insid1/go-auth-user/auth-service/internal/config"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 
 	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	userPkg "github.com/Insid1/go-auth-user/user/pkg"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
 )
 
 type App struct {
@@ -24,7 +25,7 @@ type App struct {
 	DB             *sql.DB
 	Logger         *zap.SugaredLogger
 	grpcServer     *grpc.Server
-	grpcUserClient *common.GRPCClient[user_v1.UserV1Client]
+	grpcUserClient *userPkg.GRPCInitializedUserClient
 	provider       *Provider
 }
 
@@ -133,7 +134,22 @@ func (a *App) initProvider(ctx context.Context) error {
 }
 
 func (a *App) initGRPCServer(_ context.Context) error {
-	a.grpcServer = grpc.NewServer()
+
+	// Логирование паники
+	recoveryOpts := []recovery.Option{
+		recovery.WithRecoveryHandler(func(p interface{}) (err error) {
+			// Логируем информацию о панике с уровнем Error
+			a.Logger.Errorf("Recovered from panic. panic: %s", p)
+
+			// При паники возвращает internal error пользователю
+			return status.Errorf(codes.Internal, "internal error")
+		}),
+	}
+
+	a.grpcServer = grpc.NewServer(grpc.ChainUnaryInterceptor(
+		// Для обработки паники внутри запросов к серверу
+		recovery.UnaryServerInterceptor(recoveryOpts...),
+	))
 
 	reflection.Register(a.grpcServer)
 
@@ -143,15 +159,16 @@ func (a *App) initGRPCServer(_ context.Context) error {
 }
 
 func (a *App) initGRPCUserClient(ctx context.Context) error {
-	connection, err := grpc.NewClient(a.config.GetUserServiceAddress(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	client, err := userPkg.InitGRPCUserClient(ctx, &userPkg.GRPCUserClientConfig{
+		ServerAddress:     a.config.GetUserServiceAddress(),
+		ClientServiceName: "auth",
+	})
 	if err != nil {
 		return err
 	}
 
-	a.grpcUserClient = &common.GRPCClient[user_v1.UserV1Client]{
-		Client:     user_v1.NewUserV1Client(connection),
-		Connection: connection,
-	}
+	a.grpcUserClient = client
+
 	return nil
 }
 
