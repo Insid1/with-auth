@@ -1,4 +1,4 @@
-module github.com/Insid1/go-auth-user/pkg
+module github.com/Insid1/with-auth/pkg
 
 go 1.22.3
 

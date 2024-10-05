@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
+	"github.com/Insid1/with-auth/pkg/grpc/auth_v1"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/handler/auth"
-	"github.com/Insid1/go-auth-user/auth-service/internal/service"
+	"github.com/Insid1/with-auth/auth-service/internal/handler/auth"
+	"github.com/Insid1/with-auth/auth-service/internal/service"
 )
 
 type Auth interface {

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package user_v1;
 
-option go_package = "github.com/Insid1/go-auth-user/pkg/grpc/user_v1;user_v1";
+option go_package = "github.com/Insid1/with-auth/pkg/grpc/user_v1;user_v1";
 
 import "google/protobuf/timestamp.proto";
 

@@ -3,11 +3,11 @@ package auth
 import (
 	"context"
 
-	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
+	"github.com/Insid1/with-auth/pkg/grpc/auth_v1"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/converter"
-	"github.com/Insid1/go-auth-user/auth-service/internal/model"
-	"github.com/Insid1/go-auth-user/auth-service/internal/service"
+	"github.com/Insid1/with-auth/auth-service/internal/converter"
+	"github.com/Insid1/with-auth/auth-service/internal/model"
+	"github.com/Insid1/with-auth/auth-service/internal/service"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

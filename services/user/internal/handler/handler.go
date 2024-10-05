@@ -3,9 +3,9 @@ package handler
 import (
 	"context"
 
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
-	"github.com/Insid1/go-auth-user/user/internal/handler/user"
-	"github.com/Insid1/go-auth-user/user/internal/service"
+	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
+	"github.com/Insid1/with-auth/user/internal/handler/user"
+	"github.com/Insid1/with-auth/user/internal/service"
 )
 
 type User interface {

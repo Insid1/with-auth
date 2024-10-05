@@ -6,16 +6,15 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/app"
+	"github.com/Insid1/with-auth/auth-service/internal/app"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 )
 
 func main() {
-
 	ctx := context.Background()
-	application, err := app.NewApp(ctx)
 
+	application, err := app.NewApp(ctx)
 	if err != nil {
 		panic(err)
 	}

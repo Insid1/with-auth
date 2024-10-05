@@ -1,9 +1,9 @@
 package converter
 
 import (
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
 
-	"github.com/Insid1/go-auth-user/user/internal/model"
+	"github.com/Insid1/with-auth/user/internal/model"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

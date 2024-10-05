@@ -1,7 +1,14 @@
-package dbErrors
+package db
 
 import (
+	"errors"
+
 	"github.com/lib/pq"
+)
+
+var (
+	ErrUnableToOpenConnection = errors.New("unable to Open DB Connection")
+	ErrUnableToConnect        = errors.New("unable to connect to DB")
 )
 
 func CheckIsDBError(err error) *pq.Error {

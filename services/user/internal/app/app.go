@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"net"
 
-	authPkg "github.com/Insid1/go-auth-user/auth/pkg"
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
-	serverInterceptors "github.com/Insid1/go-auth-user/pkg/interceptors/server"
-	"github.com/Insid1/go-auth-user/user/internal/config"
+	authPkg "github.com/Insid1/with-auth/auth/pkg"
+	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
+	serverInterceptors "github.com/Insid1/with-auth/pkg/interceptors/server"
+	"github.com/Insid1/with-auth/user/internal/config"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"

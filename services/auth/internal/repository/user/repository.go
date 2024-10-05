@@ -3,8 +3,8 @@ package user
 import (
 	"context"
 
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
-	userPkg "github.com/Insid1/go-auth-user/user/pkg"
+	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
+	userPkg "github.com/Insid1/with-auth/user/pkg"
 )
 
 type Repository struct {

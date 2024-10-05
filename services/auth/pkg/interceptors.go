@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
-	"github.com/Insid1/go-auth-user/pkg/utils"
+	"github.com/Insid1/with-auth/pkg/grpc/auth_v1"
+	"github.com/Insid1/with-auth/pkg/utils"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/model"
-	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
-	"github.com/Insid1/go-auth-user/auth-service/internal/service/auth"
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	"github.com/Insid1/with-auth/auth-service/internal/model"
+	"github.com/Insid1/with-auth/auth-service/internal/repository"
+	"github.com/Insid1/with-auth/auth-service/internal/service/auth"
+	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
 )
 
 type Auth interface {

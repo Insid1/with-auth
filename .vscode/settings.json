@@ -1,0 +1,18 @@
+{
+  "protoc": {
+    "path": "/opt/homebrew/bin/protoc",
+    "compile_on_save": false,
+    "options": [
+      "--proto_path=protos/v3",
+      "--proto_path=protos/v2",
+      "--proto_path=${workspaceRoot}/proto",
+      "--proto_path=${env.GOPATH}/src",
+      "--go_out=gen/go"
+    ]
+  },
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": [
+    "--fast",
+    "--issues-exit-code=0",
+  ],
+}

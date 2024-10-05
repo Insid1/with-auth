@@ -3,10 +3,10 @@ package app
 import (
 	"database/sql"
 
-	"github.com/Insid1/go-auth-user/user/internal/config"
-	"github.com/Insid1/go-auth-user/user/internal/handler"
-	"github.com/Insid1/go-auth-user/user/internal/repository"
-	"github.com/Insid1/go-auth-user/user/internal/service"
+	"github.com/Insid1/with-auth/user/internal/config"
+	"github.com/Insid1/with-auth/user/internal/handler"
+	"github.com/Insid1/with-auth/user/internal/repository"
+	"github.com/Insid1/with-auth/user/internal/service"
 )
 
 type Provider struct {

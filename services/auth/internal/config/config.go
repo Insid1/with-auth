@@ -4,7 +4,7 @@ import (
 	"log"
 	"net"
 
-	commonConfig "github.com/Insid1/go-auth-user/pkg/config"
+	commonConfig "github.com/Insid1/with-auth/pkg/config"
 )
 
 type AppConfig struct {

@@ -7,7 +7,7 @@
 package auth_v1
 
 import (
-	user_v1 "github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	user_v1 "github.com/Insid1/with-auth/pkg/grpc/user_v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/repository/auth"
-	"github.com/Insid1/go-auth-user/auth-service/internal/repository/user"
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
-	userPkg "github.com/Insid1/go-auth-user/user/pkg"
+	"github.com/Insid1/with-auth/auth-service/internal/repository/auth"
+	"github.com/Insid1/with-auth/auth-service/internal/repository/user"
+	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
+	userPkg "github.com/Insid1/with-auth/user/pkg"
 )
 
 type User interface {

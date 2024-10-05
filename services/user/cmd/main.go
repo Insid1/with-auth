@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Insid1/go-auth-user/user/internal/app"
-	"github.com/Insid1/go-auth-user/user/internal/config"
+	"github.com/Insid1/with-auth/user/internal/app"
+	"github.com/Insid1/with-auth/user/internal/config"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 )

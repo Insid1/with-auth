@@ -3,9 +3,9 @@ package pkg
 import (
 	"context"
 
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
 
-	clientInterceptors "github.com/Insid1/go-auth-user/pkg/interceptors/client"
+	clientInterceptors "github.com/Insid1/with-auth/pkg/interceptors/client"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

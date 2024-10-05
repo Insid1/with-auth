@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/model"
-	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
-	authErrors "github.com/Insid1/go-auth-user/pkg/errors/auth"
-	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
+	"github.com/Insid1/with-auth/auth-service/internal/model"
+	"github.com/Insid1/with-auth/auth-service/internal/repository"
+	authErrors "github.com/Insid1/with-auth/pkg/errors/auth"
+	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
 
 	"github.com/golang-jwt/jwt"
 )

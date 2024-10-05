@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Insid1/go-auth-user/user/internal/model"
-	"github.com/Insid1/go-auth-user/user/internal/repository"
+	"github.com/Insid1/with-auth/user/internal/model"
+	"github.com/Insid1/with-auth/user/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 

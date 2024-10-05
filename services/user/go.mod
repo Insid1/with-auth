@@ -1,10 +1,10 @@
-module github.com/Insid1/go-auth-user/user
+module github.com/Insid1/with-auth/user
 
 go 1.22.3
 
 require (
-	github.com/Insid1/go-auth-user/pkg v0.0.0
-	github.com/Insid1/go-auth-user/auth v0.0.0
+	github.com/Insid1/with-auth/pkg v0.0.0
+	github.com/Insid1/with-auth/auth v0.0.0
 	github.com/lib/pq v1.10.9
 	google.golang.org/grpc v1.66.2
 	google.golang.org/protobuf v1.34.2
@@ -17,8 +17,8 @@ require (
 
 require github.com/ilyakaznacheev/cleanenv v1.5.0 // indirect
 
-replace github.com/Insid1/go-auth-user/pkg => ../pkg
-replace github.com/Insid1/go-auth-user/auth => ../auth
+replace github.com/Insid1/with-auth/pkg => ../pkg
+replace github.com/Insid1/with-auth/auth => ../auth
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect

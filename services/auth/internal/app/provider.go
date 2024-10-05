@@ -3,11 +3,11 @@ package app
 import (
 	"database/sql"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/config"
-	"github.com/Insid1/go-auth-user/auth-service/internal/handler"
-	"github.com/Insid1/go-auth-user/auth-service/internal/repository"
-	"github.com/Insid1/go-auth-user/auth-service/internal/service"
-	userPkg "github.com/Insid1/go-auth-user/user/pkg"
+	"github.com/Insid1/with-auth/auth-service/internal/config"
+	"github.com/Insid1/with-auth/auth-service/internal/handler"
+	"github.com/Insid1/with-auth/auth-service/internal/repository"
+	"github.com/Insid1/with-auth/auth-service/internal/service"
+	userPkg "github.com/Insid1/with-auth/user/pkg"
 )
 
 type Provider struct {
@@ -26,8 +26,16 @@ func newProvider(
 	config *config.Config,
 	db *sql.DB,
 	grpcUserClient *userPkg.GRPCInitializedUserClient,
-) (*Provider, error) {
-	return &Provider{config: config, db: db, grpcUserClient: grpcUserClient}, nil
+) *Provider {
+	return &Provider{
+		config:         config,
+		db:             db,
+		grpcUserClient: grpcUserClient,
+		authHandler:    nil,
+		authService:    nil,
+		authRepository: nil,
+		userRepository: nil,
+	}
 }
 
 func (p *Provider) AuthHandler() handler.Auth {

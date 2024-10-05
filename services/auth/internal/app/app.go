@@ -3,16 +3,15 @@ package app
 import (
 	"context"
 	"database/sql"
-	"errors"
-	"fmt"
 	"net"
 
-	"github.com/Insid1/go-auth-user/auth-service/internal/config"
+	"github.com/Insid1/with-auth/auth-service/internal/config"
+	dbErrors "github.com/Insid1/with-auth/pkg/errors/db"
+	grpcErrors "github.com/Insid1/with-auth/pkg/errors/grpc"
+	"github.com/Insid1/with-auth/pkg/grpc/auth_v1"
+	userPkg "github.com/Insid1/with-auth/user/pkg"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
-
-	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
-	userPkg "github.com/Insid1/go-auth-user/user/pkg"
-
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -30,7 +29,14 @@ type App struct {
 }
 
 func NewApp(ctx context.Context) (*App, error) {
-	a := &App{}
+	a := &App{
+		config:         nil,
+		DB:             nil,
+		Logger:         nil,
+		grpcServer:     nil,
+		grpcUserClient: nil,
+		provider:       nil,
+	}
 
 	err := a.initDeps(ctx)
 	if err != nil {
@@ -45,6 +51,7 @@ func (a *App) Run() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -54,13 +61,12 @@ func (a *App) Stop() error {
 	if err := a.DB.Close(); err != nil {
 		return err
 	}
+
 	if err := a.grpcUserClient.Connection.Close(); err != nil {
 		return err
 	}
 
-	a.Logger.Sync()
-
-	return nil
+	return a.Logger.Sync()
 }
 
 func (a *App) initDeps(ctx context.Context) error {
@@ -83,13 +89,13 @@ func (a *App) initDeps(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) initConfig(ctx context.Context) error {
+func (a *App) initConfig(_ context.Context) error {
 	a.config = config.MustLoad()
-	return nil
 
+	return nil
 }
 
-func (a *App) initLogger(ctx context.Context) error {
+func (a *App) initLogger(_ context.Context) error {
 	var logger *zap.Logger
 
 	// todo Требует дополнительной доработки по необходимости
@@ -105,16 +111,15 @@ func (a *App) initLogger(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) initDataBaseConnection(ctx context.Context) error {
-
+func (a *App) initDataBaseConnection(_ context.Context) error {
 	db, err := sql.Open("postgres", a.config.GetDataBaseURL())
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to Open DB Connection. %s", err))
-
+		return errors.Wrap(dbErrors.ErrUnableToOpenConnection, err.Error())
 	}
+
 	err = db.Ping()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to connect to DB. %s", err))
+		return errors.Wrap(dbErrors.ErrUnableToConnect, err.Error())
 	}
 
 	a.Logger.Info("Connected to DataBase")
@@ -123,21 +128,18 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) initProvider(ctx context.Context) error {
-	provider, err := newProvider(a.config, a.DB, a.grpcUserClient)
-	if err != nil {
-		return err
-	}
+func (a *App) initProvider(_ context.Context) error {
+	provider := newProvider(a.config, a.DB, a.grpcUserClient)
 
 	a.provider = provider
+
 	return nil
 }
 
 func (a *App) initGRPCServer(_ context.Context) error {
-
 	// Логирование паники
 	recoveryOpts := []recovery.Option{
-		recovery.WithRecoveryHandler(func(p interface{}) (err error) {
+		recovery.WithRecoveryHandler(func(p interface{}) error {
 			// Логируем информацию о панике с уровнем Error
 			a.Logger.Errorf("Recovered from panic. panic: %s", p)
 
@@ -177,12 +179,12 @@ func (a *App) runGRPCServer() error {
 
 	list, err := net.Listen("tcp", a.config.GetAppAddress())
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to listen GRPC Auth server. %s", err))
+		return errors.Wrap(grpcErrors.ErrUnableToListenGrpcServer, err.Error())
 	}
 
 	err = a.grpcServer.Serve(list)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Unable to serve GRPC Auth server. %s", err))
+		return errors.Wrap(grpcErrors.ErrUnableToServeGrpcServer, err.Error())
 	}
 
 	return nil
