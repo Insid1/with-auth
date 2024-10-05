@@ -8,7 +8,7 @@ import (
 
 	authPkg "github.com/Insid1/go-auth-user/auth/pkg"
 	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
-	"github.com/Insid1/go-auth-user/pkg/utils"
+	serverInterceptors "github.com/Insid1/go-auth-user/pkg/interceptors/server"
 	"github.com/Insid1/go-auth-user/user/internal/config"
 
 	"go.uber.org/zap"
@@ -125,8 +125,8 @@ func (a *App) initProvider(ctx context.Context) error {
 func (a *App) initGRPCServer(ctx context.Context) error {
 
 	a.grpcServer = grpc.NewServer(grpc.ChainUnaryInterceptor(
-		utils.GetUnaryPanicInterceptor(a.Logger),
-		utils.UnaryLoggingInterceptor(a.Logger),
+		serverInterceptors.UnaryPanicInterceptor(a.Logger),
+		serverInterceptors.UnaryLoggingInterceptor(a.Logger),
 		authPkg.AuthUnaryInterceptor(a.authClient.Client, a.getAuthMethodNames()),
 	))
 

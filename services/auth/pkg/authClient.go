@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
-	"github.com/Insid1/go-auth-user/pkg/utils"
+	clientInterceptors "github.com/Insid1/go-auth-user/pkg/interceptors/client"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -25,7 +25,7 @@ func InitGRPCAuthClient(ctx context.Context, cfg *GRPCAuthClientConfig) (*GRPCIn
 		cfg.ServerAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithChainUnaryInterceptor(
-			utils.GetUnaryServiceInfoInterceptor(cfg.ClientServiceName),
+			clientInterceptors.UnaryServiceInfoInterceptor(cfg.ClientServiceName),
 		),
 	)
 	if err != nil {
