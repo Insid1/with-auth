@@ -5,21 +5,15 @@ import (
 	"database/sql"
 	"fmt"
 	"net"
-	"strings"
 
 	authPkg "github.com/Insid1/go-auth-user/auth/pkg"
-	"github.com/Insid1/go-auth-user/pkg/grpc/auth_v1"
 	"github.com/Insid1/go-auth-user/pkg/grpc/user_v1"
 	"github.com/Insid1/go-auth-user/pkg/utils"
 	"github.com/Insid1/go-auth-user/user/internal/config"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc/status"
 )
 
 type App struct {
@@ -69,8 +63,8 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initLogger,
 		a.initDataBaseConnection,
 		a.initProvider,
-		a.initGRPCServer,
 		a.initGRPCAuthClient,
+		a.initGRPCServer,
 	}
 
 	for _, fn := range arr {
@@ -132,8 +126,8 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 
 	a.grpcServer = grpc.NewServer(grpc.ChainUnaryInterceptor(
 		utils.GetUnaryPanicInterceptor(a.Logger),
-		a.getAuthUnaryInterceptor(a.getAuthMethodNames()),
-		a.getUnaryLoggingInterceptor(),
+		utils.UnaryLoggingInterceptor(a.Logger),
+		authPkg.AuthUnaryInterceptor(a.authClient.Client, a.getAuthMethodNames()),
 	))
 
 	reflection.Register(a.grpcServer)
@@ -175,98 +169,6 @@ func (a *App) runGRPCServer() error {
 }
 
 // todo ПЕРЕНЕСИ интерсепторы в pkg
-// Для логирования данных из запросов и ответов
-func (a *App) getUnaryLoggingInterceptor() grpc.UnaryServerInterceptor {
-
-	loggingOpts := []logging.Option{
-		logging.WithLogOnEvents(
-			logging.PayloadReceived,
-			logging.PayloadSent,
-		),
-	}
-
-	return logging.UnaryServerInterceptor(a.getInterceptorLogger(), loggingOpts...)
-}
-
-func (a *App) getInterceptorLogger() logging.Logger {
-	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
-		a.Logger.Log(zap.InfoLevel, msg, fields)
-	})
-}
-
-func (a *App) getAuthUnaryInterceptor(methodsName []string) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
-
-		// check is method in methodsName
-		if !utils.IsInList(info.FullMethod, methodsName) {
-			return handler(ctx, req)
-		}
-
-		// Извлечение headers из запроса данных
-		md, ok := metadata.FromIncomingContext(ctx)
-		if !ok {
-			return "", status.Errorf(codes.Unauthenticated, "error retrieving headers")
-		}
-
-		// Проверка, что сервис имеет доступ к данным
-		err = checkAuthService(md)
-		if err == nil {
-			return handler(ctx, req)
-		}
-
-		accessToken, err := retrieveAccessToken(md)
-		if err != nil {
-			return "", status.Errorf(codes.Unauthenticated, "error retrieving token")
-		}
-
-		_, err = a.authClient.Client.Check(ctx, &auth_v1.CheckReq{
-			AccessToken: accessToken,
-		})
-
-		if err != nil {
-			return nil, status.Errorf(codes.Unauthenticated, "error validating token")
-		} else {
-			return handler(ctx, req)
-		}
-	}
-}
-
-func retrieveAccessToken(md metadata.MD) (string, error) {
-	// Извлечение авторизационных данных
-	authDataList, ok := md["authorization"]
-	if !ok {
-		return "", fmt.Errorf("unable to retrieve auth data")
-	}
-
-	// Извлечение токена
-	var accessToken string
-	prefix := "Bearer "
-	for _, authData := range authDataList {
-		accessToken, ok = strings.CutPrefix(authData, prefix)
-		if !ok {
-			return "", fmt.Errorf("unable to retrieve auth data")
-		}
-	}
-
-	return accessToken, nil
-}
-
-func checkAuthService(md metadata.MD) error {
-	// Извлечение авторизационных данных
-	serviceDataList, ok := md["service-name"]
-	if !ok {
-		return fmt.Errorf("unable to retrieve service info")
-	}
-
-	// Извлечение токена
-	for _, serviceName := range serviceDataList {
-		if serviceName == "auth" {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("not auth service")
-}
 
 // Отдает список имен методов, для которых необходима проверка токена авторизации
 func (a *App) getAuthMethodNames() []string {

@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -41,4 +42,21 @@ func GetUnaryServiceInfoInterceptor(serviceName string) grpc.UnaryClientIntercep
 		// Вызываем следующий обработчик в цепочке
 		return invoker(ctx, method, req, reply, cc, opts...)
 	}
+}
+
+// Для логирования данных из запросов и ответов
+func UnaryLoggingInterceptor(logger *zap.SugaredLogger) grpc.UnaryServerInterceptor {
+
+	loggingOpts := []logging.Option{
+		logging.WithLogOnEvents(
+			logging.PayloadReceived,
+			logging.PayloadSent,
+		),
+	}
+
+	loggerFn := logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
+		logger.Log(zap.InfoLevel, msg, fields)
+	})
+
+	return logging.UnaryServerInterceptor(loggerFn, loggingOpts...)
 }
