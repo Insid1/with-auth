@@ -13,7 +13,8 @@ var (
 
 func CheckIsDBError(err error) *pq.Error {
 	if err != nil {
-		if pqErr, ok := err.(*pq.Error); ok {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) {
 			return pqErr
 		}
 	}
