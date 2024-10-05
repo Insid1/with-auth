@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	userErrors "github.com/Insid1/with-auth/pkg/errors/user"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,7 +20,7 @@ type User struct {
 
 func (u *User) BuildUpdateString() (string, error) {
 	if u.ID == "" {
-		return "", fmt.Errorf("ID is not provided")
+		return "", userErrors.ErrUserIDNotProvided
 	}
 
 	var result string
@@ -27,9 +28,11 @@ func (u *User) BuildUpdateString() (string, error) {
 	if u.Username != "" {
 		result += fmt.Sprintf("username='%s',", u.Username)
 	}
+
 	if u.Email != "" {
 		result += fmt.Sprintf("email='%s',", u.Email)
 	}
+
 	if u.PassHash != "" {
 		result += fmt.Sprintf("password_hash='%s',", u.PassHash)
 	}
@@ -45,7 +48,7 @@ func (u *User) BuildUpdateString() (string, error) {
 
 func (u *User) UpdatePassHash(password string) error {
 	if password == "" {
-		return fmt.Errorf(`empty password provided`)
+		return userErrors.ErrEmptyPassword
 	}
 
 	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

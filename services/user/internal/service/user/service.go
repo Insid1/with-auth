@@ -1,9 +1,7 @@
 package user
 
 import (
-	"errors"
-	"fmt"
-
+	userErrors "github.com/Insid1/with-auth/pkg/errors/user"
 	"github.com/Insid1/with-auth/user/internal/model"
 	"github.com/Insid1/with-auth/user/internal/repository"
 	"golang.org/x/crypto/bcrypt"
@@ -22,13 +20,11 @@ func (s *Service) Get(id string, email string) (*model.User, error) {
 		return s.UserRepository.GetBy("email", email)
 	}
 
-	return nil, errors.New("user not found") // actually no data provided for correct req
+	return nil, userErrors.ErrUserNotFound
 }
 
 func (s *Service) Create(usr *model.User, password string) (*model.User, error) {
-
 	err := usr.UpdatePassHash(password)
-
 	if err != nil {
 		return nil, err
 	}
@@ -37,18 +33,24 @@ func (s *Service) Create(usr *model.User, password string) (*model.User, error) 
 }
 
 func (s *Service) Update(usr *model.User, password string) (*model.User, error) {
-
-	usr.UpdatePassHash(password)
+	err := usr.UpdatePassHash(password)
+	if err != nil {
+		return nil, err
+	}
 
 	return s.UserRepository.Update(usr)
 }
 
-func (s *Service) CheckPassword(id string, email, password string) (*model.User, error) {
+func (s *Service) CheckPassword(
+	userID string,
+	email, password string,
+) (*model.User, error) {
 	var usr *model.User
+
 	var err error
 
-	if id != "" {
-		usr, err = s.UserRepository.GetBy("id", id)
+	if userID != "" {
+		usr, err = s.UserRepository.GetBy("id", userID)
 	}
 
 	if usr == nil && email != "" {
@@ -63,6 +65,7 @@ func (s *Service) CheckPassword(id string, email, password string) (*model.User,
 	if err != nil {
 		return nil, err
 	}
+
 	return usr, nil
 }
 
@@ -73,7 +76,7 @@ func (s *Service) Delete(id string) (string, error) {
 func (s *Service) CheckPasswordHash(passwordHash, password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password))
 	if err != nil {
-		return fmt.Errorf("error: Password is invalid. %s", err)
+		return userErrors.ErrInvalidPassword
 	}
 
 	return nil

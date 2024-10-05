@@ -3,8 +3,8 @@ module github.com/Insid1/with-auth/user
 go 1.22.3
 
 require (
-	github.com/Insid1/with-auth/pkg v0.0.0
 	github.com/Insid1/with-auth/auth v0.0.0
+	github.com/Insid1/with-auth/pkg v0.0.0
 	github.com/lib/pq v1.10.9
 	google.golang.org/grpc v1.66.2
 	google.golang.org/protobuf v1.34.2
@@ -23,8 +23,9 @@ replace github.com/Insid1/with-auth/auth => ../auth
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
+	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.27.0

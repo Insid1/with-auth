@@ -66,7 +66,10 @@ func (a *App) Stop() error {
 		return err
 	}
 
-	return a.Logger.Sync()
+	// Игнорируем т.к. всегда возвращает ошибку
+	_ = a.Logger.Sync()
+
+	return nil
 }
 
 func (a *App) initDeps(ctx context.Context) error {

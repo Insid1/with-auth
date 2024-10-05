@@ -1,9 +1,8 @@
 package converter
 
 import (
-	"github.com/Insid1/with-auth/pkg/grpc/auth_v1"
-
 	"github.com/Insid1/with-auth/auth-service/internal/model"
+	"github.com/Insid1/with-auth/pkg/grpc/auth_v1"
 )
 
 func ToLoginModelFromReq(req *auth_v1.LoginReq) *model.Login {
@@ -14,7 +13,6 @@ func ToLoginModelFromReq(req *auth_v1.LoginReq) *model.Login {
 }
 
 func ToRegisterModelFromReq(req *auth_v1.RegisterReq) *model.Register {
-
 	return &model.Register{
 		Email:    req.GetEmail(),
 		Password: req.GetPassword(),

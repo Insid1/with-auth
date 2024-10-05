@@ -11,12 +11,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Интерцептор для обработки паники внутри запросов к серверу
+// Интерцептор для обработки паники внутри запросов к серверу.
 func UnaryPanicInterceptor(lgr *zap.SugaredLogger) grpc.UnaryServerInterceptor {
-
 	// Логирование паники
 	recoveryOpts := []recovery.Option{
-		recovery.WithRecoveryHandler(func(p interface{}) (err error) {
+		recovery.WithRecoveryHandler(func(p interface{}) error {
 			// Логируем информацию о панике с уровнем Error
 			lgr.Errorf("Recovered from panic. panic: %s", p)
 
@@ -28,9 +27,8 @@ func UnaryPanicInterceptor(lgr *zap.SugaredLogger) grpc.UnaryServerInterceptor {
 	return recovery.UnaryServerInterceptor(recoveryOpts...)
 }
 
-// Интерцептор для логирования данных из запросов и ответов
+// Интерцептор для логирования данных из запросов и ответов.
 func UnaryLoggingInterceptor(logger *zap.SugaredLogger) grpc.UnaryServerInterceptor {
-
 	loggingOpts := []logging.Option{
 		logging.WithLogOnEvents(
 			logging.PayloadReceived,
@@ -38,7 +36,12 @@ func UnaryLoggingInterceptor(logger *zap.SugaredLogger) grpc.UnaryServerIntercep
 		),
 	}
 
-	loggerFn := logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
+	loggerFn := logging.LoggerFunc(func(
+		_ context.Context,
+		_ logging.Level,
+		msg string,
+		fields ...any,
+	) {
 		logger.Log(zap.InfoLevel, msg, fields)
 	})
 

@@ -1,21 +1,24 @@
-package model
+package model_test
 
 import (
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/Insid1/with-auth/user/internal/model"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Содержит значения, которые переданы в полях
+// Содержит значения, которые переданы в полях.
 func TestBuildUpdateString_1(t *testing.T) {
+	t.Parallel()
 
-	var usr User
+	var usr model.User
 
 	usr.ID = "id"
-	usr.Email = "test email"
+	usr.Email = "test email1"
 	usr.Username = "test Username"
 	usr.PassHash = "test_pass-hash"
 
@@ -26,10 +29,11 @@ func TestBuildUpdateString_1(t *testing.T) {
 	assert.True(t, strings.Contains(r, usr.PassHash))
 }
 
-// Не содержит значения, которые переданы в полях
+// Не содержит значения, которые переданы в полях.
 func TestBuildUpdateString_2(t *testing.T) {
+	t.Parallel()
 
-	var usr User
+	var usr model.User
 
 	usr.ID = "id"
 	usr.CreatedAt = time.Now()
@@ -42,41 +46,46 @@ func TestBuildUpdateString_2(t *testing.T) {
 	assert.False(t, strings.Contains(r, usr.UpdatedAt.GoString()))
 }
 
-// Возвращает ошибку
+// Возвращает ошибку.
 func TestBuildUpdateString_3(t *testing.T) {
+	t.Parallel()
 
-	var usr User
+	var usr model.User
 
 	usr.Email = "test email"
 	usr.Username = "test name"
 	usr.PassHash = "test_pass-hash"
 
-	r, err := usr.BuildUpdateString()
+	res, err := usr.BuildUpdateString()
 
-	assert.NotNil(t, err)
-	assert.Equal(t, r, "")
+	require.Error(t, err)
+	assert.Equal(t, "", res)
 }
 
-// Проверки временной метки
+// Проверки временной метки.
 func TestBuildUpdateString_4(t *testing.T) {
-	var usr User
+	t.Parallel()
+
+	var usr model.User
 
 	usr.ID = "id"
 
-	r, _ := usr.BuildUpdateString()
+	res, _ := usr.BuildUpdateString()
 
-	assert.False(t, strings.Contains(r, "CURRENT_TIMESTAMP"))
+	assert.False(t, strings.Contains(res, "CURRENT_TIMESTAMP"))
 
 	usr.Email = "test email"
 
-	r, _ = usr.BuildUpdateString()
+	res, _ = usr.BuildUpdateString()
 
-	assert.True(t, strings.Contains(r, "CURRENT_TIMESTAMP"))
+	assert.True(t, strings.Contains(res, "CURRENT_TIMESTAMP"))
 }
 
-// Проверка обновления хэша пароля по переданному паролю
+// Проверка обновления хэша пароля по переданному паролю.
 func TestUpdatePassHash_1(t *testing.T) {
-	var usr User
+	t.Parallel()
+
+	var usr model.User
 
 	assert.Empty(t, usr.PassHash)
 
@@ -84,15 +93,17 @@ func TestUpdatePassHash_1(t *testing.T) {
 
 	err := usr.UpdatePassHash(password)
 
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.NotEmpty(t, usr.PassHash)
 
-	assert.Nil(t, bcrypt.CompareHashAndPassword([]byte(usr.PassHash), []byte(password)))
+	assert.NoError(t, bcrypt.CompareHashAndPassword([]byte(usr.PassHash), []byte(password)))
 }
 
-// Проверка обновления хэша пароля при пустой строке пароля (Обновления не должно происходить)
+// Проверка обновления хэша пароля при пустой строке пароля (Обновления не должно происходить).
 func TestUpdatePassHash_2(t *testing.T) {
-	var usr User
+	t.Parallel()
+
+	var usr model.User
 
 	assert.Empty(t, usr.PassHash)
 
@@ -102,6 +113,6 @@ func TestUpdatePassHash_2(t *testing.T) {
 
 	err := usr.UpdatePassHash(password)
 
-	assert.NotNil(t, err)
-	assert.Equal(t, usr.PassHash, "some test data")
+	require.Error(t, err)
+	assert.Equal(t, "some test data", usr.PassHash)
 }

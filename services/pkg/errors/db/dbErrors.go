@@ -9,6 +9,7 @@ import (
 var (
 	ErrUnableToOpenConnection = errors.New("unable to Open DB Connection")
 	ErrUnableToConnect        = errors.New("unable to connect to DB")
+	ErrInvalidColumn          = errors.New("invalid column name: ")
 )
 
 func CheckIsDBError(err error) *pq.Error {

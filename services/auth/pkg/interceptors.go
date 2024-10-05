@@ -2,22 +2,25 @@ package pkg
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
+	authErrors "github.com/Insid1/with-auth/pkg/errors/auth"
 	"github.com/Insid1/with-auth/pkg/grpc/auth_v1"
 	"github.com/Insid1/with-auth/pkg/utils"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
-// AuthUnaryInterceptor интерцептор для проверки авторизации и аунтефикации
+// AuthUnaryInterceptor интерцептор для проверки авторизации и аунтефикации.
 func AuthUnaryInterceptor(client auth_v1.AuthV1Client, methodsName []string) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
-
+	return func(
+		ctx context.Context,
+		req any,
+		info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler,
+	) (resp any, err error) {
 		// check is method in methodsName
 		if !utils.IsInList(info.FullMethod, methodsName) {
 			return handler(ctx, req)
@@ -43,12 +46,11 @@ func AuthUnaryInterceptor(client auth_v1.AuthV1Client, methodsName []string) grp
 		_, err = client.Check(ctx, &auth_v1.CheckReq{
 			AccessToken: accessToken,
 		})
-
 		if err != nil {
 			return nil, status.Errorf(codes.Unauthenticated, "error validating token")
-		} else {
-			return handler(ctx, req)
 		}
+
+		return handler(ctx, req)
 	}
 }
 
@@ -56,16 +58,18 @@ func retrieveAccessToken(md metadata.MD) (string, error) {
 	// Извлечение авторизационных данных
 	authDataList, ok := md["authorization"]
 	if !ok {
-		return "", fmt.Errorf("unable to retrieve auth data")
+		return "", authErrors.ErrUnableToRetrieveAuth
 	}
 
 	// Извлечение токена
 	var accessToken string
+
 	prefix := "Bearer "
 	for _, authData := range authDataList {
 		accessToken, ok = strings.CutPrefix(authData, prefix)
+
 		if !ok {
-			return "", fmt.Errorf("unable to retrieve auth data")
+			return "", authErrors.ErrUnableToRetrieveAuth
 		}
 	}
 
@@ -76,7 +80,7 @@ func checkAuthService(md metadata.MD) error {
 	// Извлечение авторизационных данных
 	serviceDataList, ok := md["service-name"]
 	if !ok {
-		return fmt.Errorf("unable to retrieve service info")
+		return authErrors.ErrUnableToRetrieveServiceInfo
 	}
 
 	// Извлечение токена
@@ -86,5 +90,5 @@ func checkAuthService(md metadata.MD) error {
 		}
 	}
 
-	return fmt.Errorf("not auth service")
+	return authErrors.ErrPermissionDeniedForService
 }

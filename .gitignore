@@ -1,5 +1,4 @@
 .idea/*
 **/db/db_data
-.vscode
 *.pem
 *.srl

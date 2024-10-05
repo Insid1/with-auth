@@ -19,7 +19,6 @@ func main() {
 	config.MustLoad()
 
 	application, err := app.NewApp(ctx)
-
 	if err != nil {
 		panic(fmt.Sprintf("Failed to initialize application: %v", err))
 	}

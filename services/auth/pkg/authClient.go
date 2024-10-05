@@ -5,7 +5,6 @@ import (
 
 	"github.com/Insid1/with-auth/pkg/grpc/auth_v1"
 	clientInterceptors "github.com/Insid1/with-auth/pkg/interceptors/client"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -20,7 +19,7 @@ type GRPCAuthClientConfig struct {
 	ClientServiceName string
 }
 
-func InitGRPCAuthClient(ctx context.Context, cfg *GRPCAuthClientConfig) (*GRPCInitializedAuthClient, error) {
+func InitGRPCAuthClient(_ context.Context, cfg *GRPCAuthClientConfig) (*GRPCInitializedAuthClient, error) {
 	connection, err := grpc.NewClient(
 		cfg.ServerAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),

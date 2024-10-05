@@ -31,24 +31,27 @@ func (r *Repository) Create(
 ) (*user_v1.User, error) {
 	resp, err := r.UserClient.Client.Create(ctx, &user_v1.CreateReq{
 		User: &user_v1.User{
-			Email:    email,
-			Username: email,
+			Id:        "",
+			Username:  email,
+			Email:     email,
+			CreatedAt: nil,
+			UpdatedAt: nil,
 		},
 		Password: password,
 	})
-
 	if err != nil {
 		return nil, err
 	}
 
 	return resp.GetUser(), nil
 }
+
 func (r *Repository) CheckPassword(ctx context.Context, email string, password string) (*user_v1.User, error) {
 	resp, err := r.UserClient.Client.CheckPassword(ctx, &user_v1.CheckPasswordReq{
+		Id:       "",
 		Email:    email,
 		Password: password,
 	})
-
 	if err != nil {
 		return nil, err
 	}

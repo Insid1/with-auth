@@ -2,7 +2,6 @@ package converter
 
 import (
 	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
-
 	"github.com/Insid1/with-auth/user/internal/model"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -20,9 +19,10 @@ func ToUserFromModel(user *model.User) *user_v1.User {
 func ToModelFromUser(user *user_v1.User) *model.User {
 	return &model.User{
 		ID:        user.GetId(),
-		Email:     user.GetEmail(),
 		Username:  user.GetUsername(),
-		CreatedAt: user.CreatedAt.AsTime(),
-		UpdatedAt: user.UpdatedAt.AsTime(),
+		Email:     user.GetEmail(),
+		PassHash:  "",
+		CreatedAt: user.GetCreatedAt().AsTime(),
+		UpdatedAt: user.GetUpdatedAt().AsTime(),
 	}
 }

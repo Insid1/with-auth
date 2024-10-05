@@ -22,7 +22,13 @@ func newProvider(
 	config *config.Config,
 	db *sql.DB,
 ) *Provider {
-	return &Provider{config: config, db: db}
+	return &Provider{
+		config:         config,
+		db:             db,
+		userHandler:    nil,
+		userService:    nil,
+		userRepository: nil,
+	}
 }
 
 func (p *Provider) UserHandler() handler.User {

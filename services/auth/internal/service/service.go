@@ -12,15 +12,15 @@ import (
 type Auth interface {
 	Login(ctx context.Context, data *model.Login) (*auth.TokenPair, error)
 	Register(ctx context.Context, data *model.Register) (*user_v1.User, error)
-	LogoutAll(ctx context.Context, userId string) error
-	GenerateTokenPair(ctx context.Context, userId string, email string) (*auth.TokenPair, error)
+	LogoutAll(ctx context.Context, userID string) error
+	GenerateTokenPair(ctx context.Context, userID string, email string) (*auth.TokenPair, error)
 	CheckAccessToken(ctx context.Context, accessToken string) (*auth.AccessTokenClaims, error)
 	CheckRefreshToken(ctx context.Context, refreshToken string) (*auth.RefreshTokenClaims, error)
 }
 
-func NewAuthService(JWTKey string, userRepo repository.User, authRepo repository.Auth) Auth {
+func NewAuthService(jwtKey string, userRepo repository.User, authRepo repository.Auth) Auth {
 	return &auth.Service{
-		JWTKey:         JWTKey,
+		JWTKey:         jwtKey,
 		UserRepository: userRepo,
 		AuthRepository: authRepo,
 	}

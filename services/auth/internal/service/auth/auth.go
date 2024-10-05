@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"strings"
 	"time"
 
@@ -11,8 +10,12 @@ import (
 	"github.com/Insid1/with-auth/auth-service/internal/repository"
 	authErrors "github.com/Insid1/with-auth/pkg/errors/auth"
 	"github.com/Insid1/with-auth/pkg/grpc/user_v1"
-
 	"github.com/golang-jwt/jwt"
+)
+
+const (
+	Day21         = time.Hour * 504
+	tokenSegments = 3
 )
 
 type RefreshTokenClaims struct {
@@ -26,7 +29,6 @@ type AccessTokenClaims struct {
 }
 
 type Service struct {
-	Ctx    context.Context
 	JWTKey string
 
 	UserRepository repository.User
@@ -38,11 +40,9 @@ type TokenPair struct {
 	RefreshToken string
 }
 
-// Входа пользователя в систему
+// Входа пользователя в систему.
 func (s *Service) Login(ctx context.Context, data *model.Login) (*TokenPair, error) {
-
 	usr, err := s.UserRepository.CheckPassword(ctx, data.Email, data.Password)
-
 	if err != nil {
 		return nil, authErrors.ErrInvalidCredentials
 	}
@@ -50,9 +50,8 @@ func (s *Service) Login(ctx context.Context, data *model.Login) (*TokenPair, err
 	return s.GenerateTokenPair(ctx, usr.GetId(), usr.GetEmail())
 }
 
-// Метод регистрации пользователя
+// Метод регистрации пользователя.
 func (s *Service) Register(ctx context.Context, data *model.Register) (*user_v1.User, error) {
-
 	usr, err := s.UserRepository.Create(ctx, data.Email, data.Password)
 	if err != nil {
 		return nil, err
@@ -61,25 +60,21 @@ func (s *Service) Register(ctx context.Context, data *model.Register) (*user_v1.
 	return usr, nil
 }
 
-// Метод Выхода из всех устройств пользователя
-func (s *Service) LogoutAll(ctx context.Context, userId string) error {
-
-	_, err := s.AuthRepository.GenerateJWTUserKey(ctx, userId)
+// Метод Выхода из всех устройств пользователя.
+func (s *Service) LogoutAll(ctx context.Context, userID string) error {
+	_, err := s.AuthRepository.GenerateJWTUserKey(ctx, userID)
 
 	return err
 }
 
-// Метод генерации Access и Refresh
-func (s *Service) GenerateTokenPair(ctx context.Context, userId string, email string) (*TokenPair, error) {
-	usr, err := s.UserRepository.Get(ctx, userId, email)
-
+// Метод генерации Access и Refresh.
+func (s *Service) GenerateTokenPair(ctx context.Context, userID string, email string) (*TokenPair, error) {
+	usr, err := s.UserRepository.Get(ctx, userID, email)
 	if err != nil {
 		return nil, err
 	}
 
-	// todo добавить генерацию JWTUserKey если такового не существует для такого пользователя
-	jwtExtraKey, err := s.mustGetJWTExtraKey(ctx, usr.Id)
-
+	jwtExtraKey, err := s.mustGetJWTExtraKey(ctx, usr.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -100,16 +95,14 @@ func (s *Service) GenerateTokenPair(ctx context.Context, userId string, email st
 	}, nil
 }
 
-// Метод проверки Access токена
-func (s *Service) CheckAccessToken(ctx context.Context, accessToken string) (*AccessTokenClaims, error) {
-	_, err := s.validateToken(accessToken, "")
-
+// Метод проверки Access токена.
+func (s *Service) CheckAccessToken(_ context.Context, accessToken string) (*AccessTokenClaims, error) {
+	err := s.validateToken(accessToken, "")
 	if err != nil {
 		return nil, err
 	}
 
 	claims, err := getTokenPayload[AccessTokenClaims](accessToken)
-
 	if err != nil {
 		return nil, err
 	}
@@ -126,12 +119,11 @@ func (s *Service) CheckRefreshToken(ctx context.Context, refreshToken string) (*
 	}
 
 	JWTUserKey, err := s.mustGetJWTExtraKey(ctx, claims.Subject)
-
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = s.validateToken(refreshToken, JWTUserKey)
+	err = s.validateToken(refreshToken, JWTUserKey)
 	if err != nil {
 		return nil, err
 	}
@@ -139,14 +131,18 @@ func (s *Service) CheckRefreshToken(ctx context.Context, refreshToken string) (*
 	return claims, nil
 }
 
-// Метод генерации Access токена
+// Метод генерации Access токена.
 func (s *Service) generateAccessToken(usr *user_v1.User) (string, error) {
 	// Генерируем полезные данные, которые будут храниться в токене
 	payload := AccessTokenClaims{
 		StandardClaims: jwt.StandardClaims{
-			Subject: usr.GetId(),
-			// 1 hour
+			Audience:  "",
 			ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
+			Id:        "",
+			IssuedAt:  0,
+			Issuer:    "",
+			NotBefore: 0,
+			Subject:   usr.GetId(),
 		},
 		Email: usr.GetEmail(),
 	}
@@ -157,14 +153,18 @@ func (s *Service) generateAccessToken(usr *user_v1.User) (string, error) {
 	return token.SignedString([]byte(s.JWTKey))
 }
 
-// Метод генерации Refresh токена
-func (s *Service) generateRefreshToken(id string, extraKeyData string) (string, error) {
+// Метод генерации Refresh токена.
+func (s *Service) generateRefreshToken(userID string, extraKeyData string) (string, error) {
 	// Генерируем полезные данные, которые будут храниться в токене
 	payload := RefreshTokenClaims{
 		StandardClaims: jwt.StandardClaims{
-			Subject: id,
-			// 21 day
-			ExpiresAt: time.Now().Add(time.Hour * 504).Unix(),
+			Audience:  "",
+			ExpiresAt: time.Now().Add(Day21).Unix(),
+			Id:        "",
+			IssuedAt:  0,
+			Issuer:    "",
+			NotBefore: 0,
+			Subject:   userID,
 		},
 	}
 
@@ -174,38 +174,40 @@ func (s *Service) generateRefreshToken(id string, extraKeyData string) (string, 
 	return token.SignedString([]byte(s.JWTKey + extraKeyData))
 }
 
-// Метод получения пэйлоада из токена
+// Метод получения пэйлоада из токена.
 func getTokenPayload[T interface{}](token string) (*T, error) {
 	// Разделение токена на части
 	parts := strings.Split(token, ".")
-	if len(parts) != 3 {
-		return nil, fmt.Errorf("invalid token format")
+	if len(parts) != tokenSegments {
+		return nil, authErrors.ErrInvalidToken
 	}
 
 	// Декодирование payload части
 	payload, err := jwt.DecodeSegment(parts[1])
 	if err != nil {
-		return nil, fmt.Errorf("unable to decode token")
+		return nil, authErrors.ErrUnableToDecodeToken
 	}
 
 	// Парсинг payload части в структуру
 	var claims T
+
 	err = json.Unmarshal(payload, &claims)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse payload")
+		return nil, authErrors.ErrUnableToParsePayload
 	}
+
 	return &claims, nil
 }
 
-// Метод проверки токена
+// Метод проверки токена.
 func (s *Service) validateToken(
 	token string,
 	extraJWTKey string,
-) (*jwt.Token, error) {
+) error {
 	validToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем, что алгоритм подписи тот, что мы ожидаем
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			return nil, authErrors.ErrUnexpectedSignMethod
 		}
 
 		// отдаем ключ подписи
@@ -213,20 +215,19 @@ func (s *Service) validateToken(
 	})
 
 	if err != nil || !validToken.Valid {
-		return nil, fmt.Errorf("invalid token")
+		return authErrors.ErrInvalidToken
 	}
 
-	return validToken, nil
+	return nil
 }
 
-// Метод получения дополнительного ключа для JWT токена. Если ключа не существует он будет сгенерирован
+// Метод получения дополнительного ключа для JWT токена. Если ключа не существует он будет сгенерирован.
 func (s *Service) mustGetJWTExtraKey(ctx context.Context, userID string) (string, error) {
 	jwtUserKey, err := s.AuthRepository.GetJWTUserKey(ctx, userID)
 
 	if err == nil {
 		return jwtUserKey, nil
 	}
-	// todo добавить проверку конкретной ошибки, что за текущим пользователем действительно нет JWTKey
 
 	return s.AuthRepository.GenerateJWTUserKey(ctx, userID)
 }

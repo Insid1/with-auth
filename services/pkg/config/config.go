@@ -12,42 +12,44 @@ type Config struct {
 	Env string `env:"ENV" env-default:"local"`
 
 	App AppConfig
-	Db  DBConfig
+	DB  DBConfig
 }
 
-// AppConfig Конфиг сервиса
+// AppConfig Конфиг сервиса.
 type AppConfig struct {
-	Host    string `env:"APP_HOST" env-default:"localhost"`
-	Port    string `env:"APP_PORT" env-default:"5431"`
+	Host    string `env:"APP_HOST"    env-default:"localhost"`
+	Port    string `env:"APP_PORT"    env-default:"5431"`
 	Timeout string `env:"APP_TIMEOUT" env-default:"5"`
 }
 
-// DBConfig Конфиг Базы данных
+// DBConfig Конфиг Базы данных.
 type DBConfig struct {
 	Host     string `env:"POSTGRES_HOST"     env-default:"localhost"`
-	Port     string `env:"DB_PORT"     env-default:"5440"`
-	Timeout  string `env:"DB_TIMEOUT" env-default:"5"`
+	Port     string `env:"DB_PORT"           env-default:"5440"`
+	Timeout  string `env:"DB_TIMEOUT"        env-default:"5"`
 	User     string `env:"POSTGRES_USER"     env-default:"postgres"`
 	Password string `env:"POSTGRES_PASSWORD" env-default:"postgres"`
 	DBName   string `env:"POSTGRES_DB"       env-default:"postgres"`
 }
 
-// ParseConfigFiles gets cfg that implements Config and parses cfg files to extract config fields
+// ParseConfigFiles gets cfg that implements Config and parses cfg files to extract config fields.
 func ParseConfigFiles(cfg interface{}, filePaths ...string) error {
-	for i := 0; i < len(filePaths); i++ {
+	for i := range filePaths {
 		err := cleanenv.ReadConfig(filePaths[i], cfg)
 		if err != nil {
 			log.Printf("Error reading configuration from file: %v", filePaths[i])
+
 			return err
 		}
 	}
+
 	return nil
 }
 
 func (cfg *Config) GetDataBaseURL() string {
 	return fmt.Sprintf("host=%s port=%s user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		cfg.Db.Host, cfg.Db.Port, cfg.Db.User, cfg.Db.Password, cfg.Db.DBName)
+		cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.Password, cfg.DB.DBName)
 }
 
 func (cfg *Config) GetAppAddress() string {
