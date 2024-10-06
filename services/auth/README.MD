@@ -6,9 +6,9 @@
 1. Заполни db/.env;
     ```
     POSTGRES_HOST="localhost"
-    POSTGRES_USER="postgres"
-    POSTGRES_PASSWORD="postgres"
-    POSTGRES_DB="go-auth-auth"
+    DB_USER="postgres"
+    DB_PASSWORD="postgres"
+    DB_NAME="go-auth-auth"
     
     ``` 
 2. Выполни `docker build -t go-auth-auth-db --file db/Dockerfile_DB_AUTH .`;

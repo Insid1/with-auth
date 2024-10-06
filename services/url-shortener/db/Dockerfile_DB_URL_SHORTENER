@@ -1,0 +1,15 @@
+FROM mongo:8
+
+ARG DB_USER
+ARG DB_PASSWORD
+
+# Указываем рабочий каталог по умолчанию
+WORKDIR /db
+# Используем значение переменной в контейнере
+
+# Используем значение переменной в контейнере
+ENV MONGO_INITDB_ROOT_USERNAME=$DB_USER
+ENV MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD
+
+# Говорим, что порт 5433 открыт для подключений внутри контейнера
+EXPOSE 5433
