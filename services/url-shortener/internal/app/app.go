@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"errors"
+	"net"
 	"net/http"
 	"time"
 
@@ -49,8 +50,15 @@ func NewApp(ctx context.Context) *App {
 }
 
 func (a *App) Run() error {
-	if err := a.runHTTPServer(); err != nil {
-		return err
+	runFunctions := []func() error{
+		a.runHTTPServer,
+	}
+
+	for _, fn := range runFunctions {
+		err := fn()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -75,10 +83,9 @@ func (a *App) initDeps(ctx context.Context) error {
 	arr := []func(ctx context.Context) error{
 		a.initConfig,
 		a.initLogger,
+		a.initProvider,
 		a.initDataBaseConnection,
 		a.initHTTPServer,
-		// a.initProvider,
-		// a.initGRPCServer,
 	}
 
 	for _, fn := range arr {
@@ -113,6 +120,12 @@ func (a *App) initLogger(_ context.Context) error {
 	return nil
 }
 
+func (a *App) initProvider(_ context.Context) error {
+	a.provider = newProvider(a.config, a.DB, a.Logger)
+
+	return nil
+}
+
 func (a *App) initDataBaseConnection(ctx context.Context) error {
 	// Установка соединения
 	client, err := mongo.Connect(
@@ -142,7 +155,7 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 func (a *App) initHTTPServer(_ context.Context) error {
 	server := &http.Server{
 		Addr:                         a.config.GetAppAddress(),
-		Handler:                      a.getRouter(),
+		Handler:                      a.provider.getRouter(),
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
 		ReadTimeout:                  readTimeout,
@@ -163,12 +176,14 @@ func (a *App) initHTTPServer(_ context.Context) error {
 }
 
 func (a *App) runHTTPServer() error {
+	lis, err := net.Listen("tcp", a.httpServer.Addr)
+	if err != nil {
+		return err
+	}
+
 	// Run the server
 	go func() {
-		err := a.httpServer.ListenAndServe()
-		if err != nil {
-			a.Logger.Error(err)
-		}
+		_ = a.httpServer.Serve(lis)
 	}()
 
 	a.Logger.Infof("HTTP url-shortener server is running on %s", a.config.GetAppAddress())

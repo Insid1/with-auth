@@ -17,9 +17,12 @@ func main() {
 
 	if err := a.Run(); err != nil {
 		a.Logger.Errorf("Failed to run application: %v", err)
-	} else {
-		a.Logger.Info("Application started")
+		_ = a.Stop(ctx)
+
+		return
 	}
+
+	a.Logger.Info("Application started")
 
 	gracefulShutdown(ctx, a)
 }

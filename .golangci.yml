@@ -132,6 +132,8 @@ linters-settings:
       - err
       - md
       - ok
+      - wg
+      - ch
       - db
       - fn
       - cb
