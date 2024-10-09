@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Insid1/with-auth/url-shortener/internal/handler/shortener"
+	"github.com/Insid1/with-auth/url-shortener/internal/service"
 )
 
 type ShortenerHandler interface {
@@ -12,6 +13,8 @@ type ShortenerHandler interface {
 	Delete(w http.ResponseWriter, r *http.Request)
 }
 
-func NewShortenerHandler() ShortenerHandler {
-	return &shortener.Handler{}
+func NewShortenerHandler(shortenerService service.ShortenerService) ShortenerHandler {
+	return &shortener.Handler{
+		ShortenerService: shortenerService,
+	}
 }

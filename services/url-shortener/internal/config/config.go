@@ -8,8 +8,9 @@ import (
 )
 
 type AppConfig struct {
-	AuthServiceHost string `env:"AUTH_SERVICE_HOST" env-default:"127.0.0.1"`
-	AuthServicePort string `env:"AUTH_SERVICE_PORT" env-default:"5432"`
+	AuthServiceHost    string `env:"AUTH_SERVICE_HOST"    env-default:"127.0.0.1"`
+	AuthServicePort    string `env:"AUTH_SERVICE_PORT"    env-default:"5432"`
+	ShortenerURLPrefix string `env:"SHORTENER_URL_PREFIX" env-default:"https://provide.your.url"`
 }
 
 type Config struct {

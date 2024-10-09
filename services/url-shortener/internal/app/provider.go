@@ -37,7 +37,7 @@ func newProvider(
 
 func (p *Provider) GetShortenerHandler() handler.ShortenerHandler {
 	if p.shortenerHandler == nil {
-		p.shortenerHandler = handler.NewShortenerHandler()
+		p.shortenerHandler = handler.NewShortenerHandler(p.GetShortenerService())
 	}
 
 	return p.shortenerHandler
@@ -45,7 +45,7 @@ func (p *Provider) GetShortenerHandler() handler.ShortenerHandler {
 
 func (p *Provider) GetShortenerService() service.ShortenerService {
 	if p.shortenerService == nil {
-		p.shortenerService = service.NewShortenerService()
+		p.shortenerService = service.NewShortenerService(p.GetShortenerRepo(), p.config)
 	}
 
 	return p.shortenerService
@@ -53,7 +53,7 @@ func (p *Provider) GetShortenerService() service.ShortenerService {
 
 func (p *Provider) GetShortenerRepo() repository.ShortenerRepository {
 	if p.shortenerRepository == nil {
-		p.shortenerRepository = repository.NewShortenerRepository()
+		p.shortenerRepository = repository.NewShortenerRepository(p.db.Database("url_shortener_db"))
 	}
 
 	return p.shortenerRepository

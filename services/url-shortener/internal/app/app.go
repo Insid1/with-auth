@@ -83,8 +83,8 @@ func (a *App) initDeps(ctx context.Context) error {
 	arr := []func(ctx context.Context) error{
 		a.initConfig,
 		a.initLogger,
-		a.initProvider,
 		a.initDataBaseConnection,
+		a.initProvider,
 		a.initHTTPServer,
 	}
 
@@ -120,12 +120,6 @@ func (a *App) initLogger(_ context.Context) error {
 	return nil
 }
 
-func (a *App) initProvider(_ context.Context) error {
-	a.provider = newProvider(a.config, a.DB, a.Logger)
-
-	return nil
-}
-
 func (a *App) initDataBaseConnection(ctx context.Context) error {
 	// Установка соединения
 	client, err := mongo.Connect(
@@ -148,6 +142,12 @@ func (a *App) initDataBaseConnection(ctx context.Context) error {
 	a.Logger.Info("Successfully connected to Mongo DB")
 
 	a.DB = client
+
+	return nil
+}
+
+func (a *App) initProvider(_ context.Context) error {
+	a.provider = newProvider(a.config, a.DB, a.Logger)
 
 	return nil
 }
