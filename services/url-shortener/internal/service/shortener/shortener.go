@@ -3,7 +3,9 @@ package shortener
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/Insid1/with-auth/url-shortener/internal/config"
@@ -20,37 +22,53 @@ type Service struct {
 	Config        *config.Config
 }
 
-func (s *Service) Get(shortenURL string) *model.URLDocument {
-	return s.ShortenerRepo.Get(shortenURL)
+func (s *Service) Get(shortenID string) (*model.URLDocument, error) {
+	return s.ShortenerRepo.Get(shortenID)
 }
 
-func (s *Service) Set(totalURL string, urlPrefix string) (*model.URLDocument, error) {
-	// Если не передан URLPrefix назначаем по умолчанию тот, что в переменных окружения
-	if urlPrefix == "" {
-		urlPrefix = s.Config.ShortenerURLPrefix
-	}
-
+func (s *Service) Set(totalURL string) (*model.URLDocument, error) {
 	shortID, err := s.generateShortID(shortIDLength)
 	if err != nil {
 		return nil, err
 	}
 
-	shortURL, err := url.JoinPath(urlPrefix, shortID)
+	doc := &model.URLDocument{
+		ID:          [12]byte{},
+		ShortID:     shortID,
+		OriginalURL: totalURL,
+		CreatedAt:   time.Time{},
+		UpdatedAt:   time.Time{},
+	}
+
+	updatedDoc, err := s.ShortenerRepo.Set(doc)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.ShortenerRepo.Set(&model.URLDocument{
-		ID:          [12]byte{},
-		ShortURL:    shortURL,
-		OriginalURL: totalURL,
-		CreatedAt:   time.Time{},
-		UpdatedAt:   time.Time{},
-	})
+	return updatedDoc, nil
 }
 
-func (s *Service) Delete(shortenURL string) error {
-	return s.ShortenerRepo.Delete(shortenURL)
+func (s *Service) Delete(shortenID string) error {
+	return s.ShortenerRepo.Delete(shortenID)
+}
+
+func (s *Service) GenerateURL(doc *model.URLDocument) (string, error) {
+	if s.Config.GetRedirectServiceAddress() == "" {
+		return "", fmt.Errorf("redirect url is not provided")
+	}
+
+	if doc.ShortID == "" {
+		return "", fmt.Errorf("invalid id")
+	}
+
+	rawShortenURL, err := url.JoinPath(s.Config.GetRedirectServiceAddress(), doc.ShortID)
+	if err != nil {
+		return "", fmt.Errorf("unable to join url")
+	}
+
+	shortenURL, _ := strings.CutPrefix(rawShortenURL, "//")
+
+	return shortenURL, nil
 }
 
 func (s *Service) generateShortID(length int) (string, error) {

@@ -7,9 +7,9 @@ import (
 )
 
 type ShortenerRepository interface {
-	Get(shortenURL string) *model.URLDocument
+	Get(shortenID string) (*model.URLDocument, error)
 	Set(doc *model.URLDocument) (*model.URLDocument, error)
-	Delete(shortenURL string) error
+	Delete(shortenID string) error
 }
 
 func NewShortenerRepository(db *mongo.Database) ShortenerRepository {

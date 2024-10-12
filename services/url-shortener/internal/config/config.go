@@ -8,9 +8,10 @@ import (
 )
 
 type AppConfig struct {
-	AuthServiceHost    string `env:"AUTH_SERVICE_HOST"    env-default:"127.0.0.1"`
-	AuthServicePort    string `env:"AUTH_SERVICE_PORT"    env-default:"5432"`
-	ShortenerURLPrefix string `env:"SHORTENER_URL_PREFIX" env-default:"https://provide.your.url"`
+	AuthServiceHost     string `env:"AUTH_SERVICE_HOST"     env-default:"127.0.0.1"`
+	AuthServicePort     string `env:"AUTH_SERVICE_PORT"     env-default:"5433"`
+	RedirectServiceHost string `env:"REDIRECT_SERVICE_HOST" env-default:"127.0.0.1"`
+	RedirectServicePort string `env:"REDIRECT_SERVICE_PORT"`
 }
 
 type Config struct {
@@ -33,4 +34,12 @@ func MustLoad() *Config {
 
 func (cfg *Config) GetAuthServiceAddress() string {
 	return net.JoinHostPort(cfg.AppConfig.AuthServiceHost, cfg.AppConfig.AuthServicePort)
+}
+
+func (cfg *Config) GetRedirectServiceAddress() string {
+	if cfg.AppConfig.RedirectServicePort == "" {
+		return cfg.AppConfig.RedirectServiceHost
+	}
+
+	return net.JoinHostPort(cfg.AppConfig.RedirectServiceHost, cfg.AppConfig.RedirectServicePort)
 }

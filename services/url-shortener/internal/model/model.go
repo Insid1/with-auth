@@ -3,13 +3,13 @@ package model
 import (
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type URLDocument struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	ShortURL    string             `bson:"short_url"`
-	OriginalURL string             `bson:"original_url"`
-	CreatedAt   time.Time          `bson:"created_at"`
-	UpdatedAt   time.Time          `bson:"updated_at"`
+	ID          bson.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	ShortID     string        `bson:"short_id"      json:"shortId,omitempty"`
+	OriginalURL string        `bson:"original_url"  json:"originalUrl,omitempty"`
+	CreatedAt   time.Time     `bson:"created_at"    json:"createdAt,omitempty"`
+	UpdatedAt   time.Time     `bson:"updated_at"    json:"updatedAt,omitempty"`
 }

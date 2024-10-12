@@ -133,6 +133,7 @@ linters-settings:
       - md
       - ok
       - wg
+      - w
       - ch
       - db
       - fn

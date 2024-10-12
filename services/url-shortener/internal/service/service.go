@@ -8,9 +8,11 @@ import (
 )
 
 type ShortenerService interface {
-	Get(shortenURL string) *model.URLDocument
-	Set(totalURL string, URLPrefix string) (*model.URLDocument, error)
-	Delete(shortenURL string) error
+	Get(shortenID string) (*model.URLDocument, error)
+	Set(totalURL string) (*model.URLDocument, error)
+	Delete(shortenID string) error
+
+	GenerateURL(doc *model.URLDocument) (string, error)
 }
 
 func NewShortenerService(

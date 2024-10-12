@@ -20,9 +20,13 @@ func (p *Provider) getRouter() http.Handler {
 
 	router.Route("/short", func(r chi.Router) {
 		shortenerHandler := p.GetShortenerHandler()
-		r.Get("/", shortenerHandler.Get)
+
 		r.Post("/", shortenerHandler.Set)
-		r.Delete("/", shortenerHandler.Delete)
+
+		r.Route("/{shortenURL}", func(r chi.Router) {
+			r.Get("/", shortenerHandler.Get)
+			r.Delete("/", shortenerHandler.Delete)
+		})
 	})
 
 	return router
