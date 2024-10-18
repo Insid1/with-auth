@@ -1,0 +1,10 @@
+version: '3'
+services:
+  nginx:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    build: .
+    ports:
+      - "5435:80"
+    env_file:
+      - .env

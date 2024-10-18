@@ -1,0 +1,59 @@
+
+
+server {
+  listen 80;
+  listen [::]:80;
+  server_name localhost;
+
+  proxy_intercept_errors on;
+
+  # Сделать entry point всего UI приложения
+  # location = / {
+  #   return 200;
+  # }
+
+  # без иконки сайта
+  location = /favicon.ico {
+    return 204;
+    access_log off;
+    log_not_found off;
+  }
+
+  # redirect not found  to the static page /404.html
+  error_page 404 /404.html;
+  location = /404.html {
+    add_header X-Custom-Header1 "This is custom header 404" always;
+
+    root /usr/share/nginx/html;
+  }
+
+  # redirect for .css and .js files
+  location ~* (js|styles)\/.+\.(js|css)$ {
+    add_header X-Custom-Header2 "This is custom header css" always;
+    root /usr/share/nginx;
+  }
+
+  # redirect server error pages to the static page /50x.html
+  error_page 500 502 503 504 /50x.html;
+  location = /50x.html {
+    add_header X-Custom-Header "This is custom header 500" always;
+    root /usr/share/nginx/html;
+  }
+
+
+  # Проксируем редирект на сервис сокращения ссылок
+  location ~ ^/([^/]+)$ {
+    # Сохраняем {id} в переменную $id
+    set $id $1;
+    # Проксируем запрос к сервису (если нужно - поменяй порты и хост)
+    proxy_pass http://192.168.65.254:$EXTERNAL_PORT/short/$id/redirect;
+
+    add_header X-Custom-Header "This is custom header еуые" always;
+
+    proxy_set_header Host $host; # Прокидываем заголовок Host
+    proxy_set_header X-Real-IP $remote_addr; # Прокидываем реальный IP клиента
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Прокидываем IP для цепочки
+    proxy_set_header X-Forwarded-Proto $scheme; # Прокидываем протокол (HTTP/HTTPS)
+  }
+
+}

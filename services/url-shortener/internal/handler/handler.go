@@ -8,6 +8,9 @@ import (
 )
 
 type ShortenerHandler interface {
+	GetLink(w http.ResponseWriter, r *http.Request)
+	Redirect(w http.ResponseWriter, r *http.Request)
+
 	Get(w http.ResponseWriter, r *http.Request)
 	Set(w http.ResponseWriter, r *http.Request)
 	Delete(w http.ResponseWriter, r *http.Request)

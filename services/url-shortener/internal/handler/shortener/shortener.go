@@ -2,10 +2,12 @@ package shortener
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/Insid1/with-auth/url-shortener/internal/service"
 	"github.com/go-chi/chi/v5"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Handler struct {
@@ -17,13 +19,59 @@ func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 
 	doc, err := h.ShortenerService.Get(shortenURL)
 	if err != nil {
-		// todo добавить проверку на "не найден"
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			http.Error(w, err.Error(), http.StatusNotFound)
+
+			return
+		}
+
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		return
 	}
 
 	h.sendJSON(w, doc)
+}
+
+func (h *Handler) GetLink(w http.ResponseWriter, req *http.Request) {
+	shortenURL := chi.URLParam(req, "shortenURL")
+
+	doc, err := h.ShortenerService.Get(shortenURL)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			http.Error(w, err.Error(), http.StatusNotFound)
+
+			return
+		}
+
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	_, err = w.Write([]byte(doc.OriginalURL))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *Handler) Redirect(w http.ResponseWriter, req *http.Request) {
+	shortenURL := chi.URLParam(req, "shortenURL")
+
+	doc, err := h.ShortenerService.Get(shortenURL)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			http.Error(w, err.Error(), http.StatusNotFound)
+
+			return
+		}
+
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, req, doc.OriginalURL, http.StatusTemporaryRedirect)
 }
 
 func (h *Handler) Set(w http.ResponseWriter, req *http.Request) {

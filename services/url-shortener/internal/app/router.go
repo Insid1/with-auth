@@ -18,14 +18,17 @@ func (p *Provider) getRouter() http.Handler {
 		w.Write([]byte("pong"))
 	})
 
-	router.Route("/short", func(r chi.Router) {
-		shortenerHandler := p.GetShortenerHandler()
+	shortenerHandler := p.GetShortenerHandler()
 
+	router.Route("/short", func(r chi.Router) {
 		r.Post("/", shortenerHandler.Set)
 
 		r.Route("/{shortenURL}", func(r chi.Router) {
 			r.Get("/", shortenerHandler.Get)
 			r.Delete("/", shortenerHandler.Delete)
+
+			r.Get("/redirect", shortenerHandler.Redirect)
+			r.Get("/link", shortenerHandler.GetLink)
 		})
 	})
 
